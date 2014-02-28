@@ -1,0 +1,238 @@
+package dry
+
+import (
+	"sync"
+)
+
+///////////////////////////////////////////////////////////////////////////////
+// SyncBool
+
+type SyncBool struct {
+	mutex sync.RWMutex
+	value bool
+}
+
+func NewSyncBool(value bool) *SyncBool {
+	return &SyncBool{value: value}
+}
+
+func (self *SyncBool) Get() bool {
+	self.mutex.RLock()
+	defer self.mutex.RUnlock()
+	return self.value
+}
+
+func (self *SyncBool) Set(value bool) {
+	self.mutex.Lock()
+	self.value = value
+	self.mutex.Unlock()
+}
+
+func (self *SyncBool) Invert() {
+	self.mutex.Lock()
+	self.value = !self.value
+	self.mutex.Unlock()
+}
+
+func (self *SyncBool) Swap(value bool) bool {
+	self.mutex.Lock()
+	defer self.mutex.Unlock()
+	result := self.value
+	self.value = value
+	return result
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SyncInt
+
+type SyncInt struct {
+	mutex sync.RWMutex
+	value int
+}
+
+func NewSyncInt(value int) *SyncInt {
+	return &SyncInt{value: value}
+}
+
+func (self *SyncInt) Get() int {
+	self.mutex.RLock()
+	defer self.mutex.RUnlock()
+	return self.value
+}
+
+func (self *SyncInt) Set(value int) {
+	self.mutex.Lock()
+	self.value = value
+	self.mutex.Unlock()
+}
+
+func (self *SyncInt) Add(value int) {
+	self.mutex.Lock()
+	self.value += value
+	self.mutex.Unlock()
+}
+
+func (self *SyncInt) Mul(value int) {
+	self.mutex.Lock()
+	self.value *= value
+	self.mutex.Unlock()
+}
+
+func (self *SyncInt) Swap(value int) int {
+	self.mutex.Lock()
+	defer self.mutex.Unlock()
+	result := self.value
+	self.value = value
+	return result
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SyncString
+
+type SyncString struct {
+	mutex sync.RWMutex
+	value string
+}
+
+func NewSyncString(value string) *SyncString {
+	return &SyncString{value: value}
+}
+
+func (self *SyncString) Get() string {
+	self.mutex.RLock()
+	defer self.mutex.RUnlock()
+	return self.value
+}
+
+func (self *SyncString) Set(value string) {
+	self.mutex.Lock()
+	self.value = value
+	self.mutex.Unlock()
+}
+
+func (self *SyncString) Append(value string) {
+	self.mutex.Lock()
+	self.value += value
+	self.mutex.Unlock()
+}
+
+func (self *SyncString) Swap(value string) string {
+	self.mutex.Lock()
+	defer self.mutex.Unlock()
+	result := self.value
+	self.value = value
+	return result
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SyncFloat
+
+type SyncFloat struct {
+	mutex sync.RWMutex
+	value float64
+}
+
+func NewSyncFloat(value float64) *SyncFloat {
+	return &SyncFloat{value: value}
+}
+
+func (self *SyncFloat) Get() float64 {
+	self.mutex.RLock()
+	defer self.mutex.RUnlock()
+	return self.value
+}
+
+func (self *SyncFloat) Set(value float64) {
+	self.mutex.Lock()
+	self.value = value
+	self.mutex.Unlock()
+}
+
+func (self *SyncFloat) Add(value float64) {
+	self.mutex.Lock()
+	self.value += value
+	self.mutex.Unlock()
+}
+
+func (self *SyncFloat) Mul(value float64) {
+	self.mutex.Lock()
+	self.value *= value
+	self.mutex.Unlock()
+}
+
+func (self *SyncFloat) Swap(value float64) float64 {
+	self.mutex.Lock()
+	defer self.mutex.Unlock()
+	result := self.value
+	self.value = value
+	return result
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SyncMap
+
+type SyncMap struct {
+	mutex sync.RWMutex
+	m     map[string]interface{}
+}
+
+func NewSyncMap() *SyncMap {
+	return &SyncMap{m: make(map[string]interface{})}
+}
+
+func (self *SyncMap) Has(key string) bool {
+	self.mutex.RLock()
+	defer self.mutex.RUnlock()
+	_, ok := self.m[key]
+	return ok
+}
+
+func (self *SyncMap) Get(key string) interface{} {
+	self.mutex.RLock()
+	defer self.mutex.RUnlock()
+	return self.m[key]
+}
+
+func (self *SyncMap) Add(key string, value interface{}) {
+	self.mutex.Lock()
+	self.m[key] = value
+	self.mutex.Unlock()
+}
+
+func (self *SyncMap) Delete(key string) {
+	self.mutex.Lock()
+	delete(self.m, key)
+	self.mutex.Unlock()
+}
+
+func (self *SyncMap) Int(key string) *SyncInt {
+	return self.Get(key).(*SyncInt)
+}
+
+func (self *SyncMap) AddInt(key string, value int) {
+	self.Add(key, NewSyncInt(value))
+}
+
+func (self *SyncMap) Float(key string) *SyncFloat {
+	return self.Get(key).(*SyncFloat)
+}
+
+func (self *SyncMap) AddFloat(key string, value float64) {
+	self.Add(key, NewSyncFloat(value))
+}
+
+func (self *SyncMap) Bool(key string) *SyncBool {
+	return self.Get(key).(*SyncBool)
+}
+
+func (self *SyncMap) AddBool(key string, value bool) {
+	self.Add(key, NewSyncBool(value))
+}
+
+func (self *SyncMap) String(key string) *SyncString {
+	return self.Get(key).(*SyncString)
+}
+
+func (self *SyncMap) AddString(key string, value string) {
+	self.Add(key, NewSyncString(value))
+}
