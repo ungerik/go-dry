@@ -108,3 +108,14 @@ func HTTPRespondMarshalIndentXML(response interface{}, prefix, indent string, re
 	handlerFunc(responseWriter, request)
 	return err
 }
+
+// HTTPRespondText sets Content-Type to text/plain
+// and compresses the response if Content-Encoding from the request allows it.
+func HTTPRespondText(response string, responseWriter http.ResponseWriter, request *http.Request) (err error) {
+	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+		responseWriter.Header().Set("Content-Type", "text/plain")
+		_, err = responseWriter.Write([]byte(response))
+	})
+	handlerFunc(responseWriter, request)
+	return err
+}
