@@ -3,6 +3,8 @@ package dry
 import (
 	"compress/flate"
 	"compress/gzip"
+	"encoding/json"
+	"encoding/xml"
 	"io"
 	"net/http"
 	"strings"
@@ -47,4 +49,62 @@ func HTTPDelete(url string) (statusCode int, statusText string, err error) {
 		return 0, "", err
 	}
 	return response.StatusCode, response.Status, nil
+}
+
+// HTTPRespondMarshalJSON marshals response as JSON to responseWriter, sets Content-Type to application/json
+// and compresses the response if Content-Encoding from the request allows it.
+func HTTPRespondMarshalJSON(response interface{}, responseWriter http.ResponseWriter, request *http.Request) (err error) {
+	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+		var data []byte
+		if data, err = json.Marshal(response); err == nil {
+			responseWriter.Header().Set("Content-Type", "application/json")
+			_, err = responseWriter.Write(data)
+		}
+	})
+	handlerFunc(responseWriter, request)
+	return err
+}
+
+// HTTPRespondMarshalIndentJSON marshals response as JSON to responseWriter, sets Content-Type to application/json
+// and compresses the response if Content-Encoding from the request allows it.
+// The JSON will be marshalled indented according to json.MarshalIndent
+func HTTPRespondMarshalIndentJSON(response interface{}, prefix, indent string, responseWriter http.ResponseWriter, request *http.Request) (err error) {
+	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+		var data []byte
+		if data, err = json.MarshalIndent(response, prefix, indent); err == nil {
+			responseWriter.Header().Set("Content-Type", "application/json")
+			_, err = responseWriter.Write(data)
+		}
+	})
+	handlerFunc(responseWriter, request)
+	return err
+}
+
+// HTTPRespondMarshalXML marshals response as XML to responseWriter, sets Content-Type to application/xml
+// and compresses the response if Content-Encoding from the request allows it.
+func HTTPRespondMarshalXML(response interface{}, responseWriter http.ResponseWriter, request *http.Request) (err error) {
+	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+		var data []byte
+		if data, err = xml.Marshal(response); err == nil {
+			responseWriter.Header().Set("Content-Type", "application/xml")
+			_, err = responseWriter.Write(data)
+		}
+	})
+	handlerFunc(responseWriter, request)
+	return err
+}
+
+// HTTPRespondMarshalIndentXML marshals response as XML to responseWriter, sets Content-Type to application/xml
+// and compresses the response if Content-Encoding from the request allows it.
+// The XML will be marshalled indented according to xml.MarshalIndent
+func HTTPRespondMarshalIndentXML(response interface{}, prefix, indent string, responseWriter http.ResponseWriter, request *http.Request) (err error) {
+	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+		var data []byte
+		if data, err = xml.MarshalIndent(response, prefix, indent); err == nil {
+			responseWriter.Header().Set("Content-Type", "application/xml")
+			_, err = responseWriter.Write(data)
+		}
+	})
+	handlerFunc(responseWriter, request)
+	return err
 }
