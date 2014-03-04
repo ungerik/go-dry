@@ -137,3 +137,17 @@ func StringJoin(values interface{}, sep string) string {
 	}
 	return buffer.String()
 }
+
+func StringFormatMemory(mem uint64) string {
+	switch {
+	case mem >= 10e12:
+		return fmt.Sprintf("%.1fTB", float64(mem)/10e12)
+	case mem >= 10e9:
+		return fmt.Sprintf("%.1fGB", float64(mem)/10e9)
+	case mem >= 10e6:
+		return fmt.Sprintf("%.1fMB", float64(mem)/10e6)
+	case mem >= 10e3:
+		return fmt.Sprintf("%.1fkB", float64(mem)/10e3)
+	}
+	return fmt.Sprintf("%dB", mem)
+}
