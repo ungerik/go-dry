@@ -83,12 +83,17 @@ func HTTPRespondMarshalIndentJSON(response interface{}, prefix, indent string, r
 
 // HTTPRespondMarshalXML marshals response as XML to responseWriter, sets Content-Type to application/xml
 // and compresses the response if Content-Encoding from the request allows it.
+// If rootElement is not empty, then an additional root element with this name will be wrapped around the content.
 func HTTPRespondMarshalXML(response interface{}, rootElement string, responseWriter http.ResponseWriter, request *http.Request) (err error) {
 	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
 		var data []byte
 		if data, err = xml.Marshal(response); err == nil {
 			responseWriter.Header().Set("Content-Type", "application/xml")
-			_, err = fmt.Fprintf(responseWriter, "%s<%s>%s</%s>", xml.Header, rootElement, data, rootElement)
+			if rootElement == "" {
+				_, err = fmt.Fprintf(responseWriter, "%s%s", xml.Header, data)
+			} else {
+				_, err = fmt.Fprintf(responseWriter, "%s<%s>%s</%s>", xml.Header, rootElement, data, rootElement)
+			}
 		}
 	})
 	handlerFunc(responseWriter, request)
@@ -97,13 +102,22 @@ func HTTPRespondMarshalXML(response interface{}, rootElement string, responseWri
 
 // HTTPRespondMarshalIndentXML marshals response as XML to responseWriter, sets Content-Type to application/xml
 // and compresses the response if Content-Encoding from the request allows it.
-// The XML will be marshalled indented according to xml.MarshalIndent
+// The XML will be marshalled indented according to xml.MarshalIndent.
+// If rootElement is not empty, then an additional root element with this name will be wrapped around the content.
 func HTTPRespondMarshalIndentXML(response interface{}, rootElement string, prefix, indent string, responseWriter http.ResponseWriter, request *http.Request) (err error) {
 	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
 		var data []byte
-		if data, err = xml.MarshalIndent(response, prefix+indent, indent); err == nil {
+		contentPrefix := prefix
+		if rootElement != "" {
+			contentPrefix += indent
+		}
+		if data, err = xml.MarshalIndent(response, contentPrefix, indent); err == nil {
 			responseWriter.Header().Set("Content-Type", "application/xml")
-			_, err = fmt.Fprintf(responseWriter, "%s%s%s<%s>\n%s\n%s</%s>", prefix, xml.Header, prefix, rootElement, data, prefix, rootElement)
+			if rootElement == "" {
+				_, err = fmt.Fprintf(responseWriter, "%s%s\n%s", prefix, xml.Header, data)
+			} else {
+				_, err = fmt.Fprintf(responseWriter, "%s%s%s<%s>\n%s\n%s</%s>", prefix, xml.Header, prefix, rootElement, data, prefix, rootElement)
+			}
 		}
 	})
 	handlerFunc(responseWriter, request)
