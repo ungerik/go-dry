@@ -143,22 +143,22 @@ func StringFormatBigInt(mem uint64) string {
 	case mem >= 10e12:
 		return fmt.Sprintf("%dT", mem/1e12)
 	case mem >= 1e12:
-		return fmt.Sprintf("%.1fT", float64(mem)/1e12)
+		return strings.TrimSuffix(fmt.Sprintf("%.1fT", float64(mem)/1e12), ".0")
 
 	case mem >= 10e9:
 		return fmt.Sprintf("%dG", mem/1e9)
 	case mem >= 1e9:
-		return fmt.Sprintf("%.1fG", float64(mem)/1e9)
+		return strings.TrimSuffix(fmt.Sprintf("%.1fG", float64(mem)/1e9), ".0")
 
 	case mem >= 10e6:
 		return fmt.Sprintf("%dM", mem/1e6)
 	case mem >= 1e6:
-		return fmt.Sprintf("%.1fM", float64(mem)/1e6)
+		return strings.TrimSuffix(fmt.Sprintf("%.1fM", float64(mem)/1e6), ".0")
 
 	case mem >= 10e3:
 		return fmt.Sprintf("%dk", mem/1e3)
 	case mem >= 1e3:
-		return fmt.Sprintf("%.1fk", float64(mem)/1e3)
+		return strings.TrimSuffix(fmt.Sprintf("%.1fk", float64(mem)/1e3), ".0")
 	}
 	return fmt.Sprintf("%d", mem)
 }
