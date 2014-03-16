@@ -21,6 +21,8 @@ import (
 	"time"
 )
 
+var DefaultFileMode os.FileMode = 0660
+
 func FileBufferedReader(filenameOrURL string) (io.Reader, error) {
 	data, err := FileGetBytes(filenameOrURL)
 	if err != nil {
@@ -54,11 +56,11 @@ func FileGetBytes(filenameOrURL string, headerTimeout ...time.Duration) ([]byte,
 }
 
 func FileSetBytes(filename string, data []byte) error {
-	return ioutil.WriteFile(filename, data, 0660)
+	return ioutil.WriteFile(filename, data, DefaultFileMode)
 }
 
 func FileAppendBytes(filename string, data []byte) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0660)
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, DefaultFileMode)
 	if err != nil {
 		return err
 	}
@@ -404,7 +406,7 @@ func FileSize(filename string) int64 {
 }
 
 func FilePrintf(filename, format string, args ...interface{}) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY, 0660)
+	file, err := os.OpenFile(filename, os.O_WRONLY, DefaultFileMode)
 	if err == nil {
 		_, err = fmt.Fprintf(file, format, args...)
 		file.Close()
@@ -413,7 +415,7 @@ func FilePrintf(filename, format string, args ...interface{}) error {
 }
 
 func FileAppendPrintf(filename, format string, args ...interface{}) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0660)
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, DefaultFileMode)
 	if err == nil {
 		_, err = fmt.Fprintf(file, format, args...)
 		file.Close()
@@ -422,7 +424,7 @@ func FileAppendPrintf(filename, format string, args ...interface{}) error {
 }
 
 func FileScanf(filename, format string, args ...interface{}) error {
-	file, err := os.OpenFile(filename, os.O_RDONLY, 0660)
+	file, err := os.OpenFile(filename, os.O_RDONLY, DefaultFileMode)
 	if err == nil {
 		_, err = fmt.Fscanf(file, format, args...)
 		file.Close()
