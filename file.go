@@ -54,11 +54,11 @@ func FileGetBytes(filenameOrURL string, headerTimeout ...time.Duration) ([]byte,
 }
 
 func FileSetBytes(filename string, data []byte) error {
-	return ioutil.WriteFile(filename, data, 0)
+	return ioutil.WriteFile(filename, data, 0660)
 }
 
 func FileAppendBytes(filename string, data []byte) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0666)
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0660)
 	if err != nil {
 		return err
 	}
