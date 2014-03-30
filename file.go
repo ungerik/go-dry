@@ -277,11 +277,13 @@ func FileIsDir(dirname string) bool {
 	return err == nil && info.IsDir()
 }
 
-func FileFind(searchDirs []string, filename string) (filePath string, found bool) {
+func FileFind(searchDirs []string, filenames ...string) (filePath string, found bool) {
 	for _, dir := range searchDirs {
-		filePath = path.Join(dir, filename)
-		if FileExists(filePath) {
-			return filePath, true
+		for _, filename := range filenames {
+			filePath = path.Join(dir, filename)
+			if FileExists(filePath) {
+				return filePath, true
+			}
 		}
 	}
 	return "", false
