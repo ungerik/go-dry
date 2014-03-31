@@ -1,8 +1,6 @@
 package dry
 
 import (
-	"compress/flate"
-	"compress/gzip"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
@@ -27,13 +25,13 @@ func HTTPCompressHandlerFunc(handlerFunc http.HandlerFunc) http.HandlerFunc {
 		accept := request.Header.Get("Accept-Encoding")
 		if strings.Contains(accept, "gzip") {
 			response.Header().Set("Content-Encoding", "gzip")
-			writer := gzip.NewWriter(response)
-			defer writer.Close()
+			writer := Gzip.GetWriter(response)
+			defer Gzip.ReturnWriter(writer)
 			response = wrappedResponseWriter{Writer: writer, ResponseWriter: response}
 		} else if strings.Contains(accept, "deflate") {
 			response.Header().Set("Content-Encoding", "deflate")
-			writer, _ := flate.NewWriter(response, flate.BestCompression)
-			defer writer.Close()
+			writer := Deflate.GetWriter(response)
+			defer Deflate.ReturnWriter(writer)
 			response = wrappedResponseWriter{Writer: writer, ResponseWriter: response}
 		}
 		handlerFunc(response, request)
