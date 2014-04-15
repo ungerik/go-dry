@@ -21,21 +21,32 @@ func (wrapped wrappedResponseWriter) Write(data []byte) (int, error) {
 // HTTPCompressHandlerFunc wraps a http.HandlerFunc so that the response gets
 // gzip or deflate compressed if the Accept-Encoding header of the request allows it.
 func HTTPCompressHandlerFunc(handlerFunc http.HandlerFunc) http.HandlerFunc {
+	handler := &HTTPCompressHandler{Handler: handlerFunc}
 	return func(response http.ResponseWriter, request *http.Request) {
-		accept := request.Header.Get("Accept-Encoding")
-		if strings.Contains(accept, "gzip") {
-			response.Header().Set("Content-Encoding", "gzip")
-			writer := Gzip.GetWriter(response)
-			defer Gzip.ReturnWriter(writer)
-			response = wrappedResponseWriter{Writer: writer, ResponseWriter: response}
-		} else if strings.Contains(accept, "deflate") {
-			response.Header().Set("Content-Encoding", "deflate")
-			writer := Deflate.GetWriter(response)
-			defer Deflate.ReturnWriter(writer)
-			response = wrappedResponseWriter{Writer: writer, ResponseWriter: response}
-		}
-		handlerFunc(response, request)
+		handler.ServeHTTP(response, request)
 	}
+}
+
+// HTTPCompressHandler wraps a http.Handler so that the response gets
+// gzip or deflate compressed if the Accept-Encoding header of the request allows it.
+type HTTPCompressHandler struct {
+	Handler http.Handler
+}
+
+func (h *HTTPCompressHandler) ServeHTTP(response http.ResponseWriter, request *http.Request) {
+	accept := request.Header.Get("Accept-Encoding")
+	if strings.Contains(accept, "gzip") {
+		response.Header().Set("Content-Encoding", "gzip")
+		writer := Gzip.GetWriter(response)
+		defer Gzip.ReturnWriter(writer)
+		response = wrappedResponseWriter{Writer: writer, ResponseWriter: response}
+	} else if strings.Contains(accept, "deflate") {
+		response.Header().Set("Content-Encoding", "deflate")
+		writer := Deflate.GetWriter(response)
+		defer Deflate.ReturnWriter(writer)
+		response = wrappedResponseWriter{Writer: writer, ResponseWriter: response}
+	}
+	h.Handler.ServeHTTP(response, request)
 }
 
 func HTTPDelete(url string) (statusCode int, statusText string, err error) {
