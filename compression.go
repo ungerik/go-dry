@@ -47,7 +47,7 @@ func (pool *DeflatePool) GetWriter(dst io.Writer) (writer *flate.Writer) {
 // Don't close the writer, Flush will be called before returning
 // it to the pool.
 func (pool *DeflatePool) ReturnWriter(writer *flate.Writer) {
-	writer.Flush()
+	writer.Close()
 	pool.mutex.Lock()
 	pool.writers = append(pool.writers, writer)
 	pool.mutex.Unlock()
@@ -93,7 +93,7 @@ func (pool *GzipPool) GetWriter(dst io.Writer) (writer *gzip.Writer) {
 // Don't close the writer, Flush will be called before returning
 // it to the pool.
 func (pool *GzipPool) ReturnWriter(writer *gzip.Writer) {
-	writer.Flush()
+	writer.Close()
 	pool.mutex.Lock()
 	pool.writers = append(pool.writers, writer)
 	pool.mutex.Unlock()
