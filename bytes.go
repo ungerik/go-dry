@@ -55,9 +55,9 @@ func BytesDecodeHex(hexStr string) string {
 
 func BytesDeflate(uncompressed []byte) (compressed []byte) {
 	var buf bytes.Buffer
-	writer, _ := flate.NewWriter(&buf, flate.BestCompression)
+	writer := Deflate.GetWriter(&buf)
 	writer.Write(uncompressed)
-	writer.Close()
+	Deflate.ReturnWriter(writer)
 	return buf.Bytes()
 }
 
@@ -69,9 +69,9 @@ func BytesInflate(compressed []byte) (uncompressed []byte) {
 
 func BytesGzip(uncompressed []byte) (compressed []byte) {
 	var buf bytes.Buffer
-	writer := gzip.NewWriter(&buf)
+	writer := Gzip.GetWriter(&buf)
 	writer.Write(uncompressed)
-	writer.Close()
+	Gzip.ReturnWriter(writer)
 	return buf.Bytes()
 }
 
