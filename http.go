@@ -21,16 +21,23 @@ func (wrapped wrappedResponseWriter) Write(data []byte) (int, error) {
 // HTTPCompressHandlerFunc wraps a http.HandlerFunc so that the response gets
 // gzip or deflate compressed if the Accept-Encoding header of the request allows it.
 func HTTPCompressHandlerFunc(handlerFunc http.HandlerFunc) http.HandlerFunc {
-	handler := &HTTPCompressHandler{Handler: handlerFunc}
 	return func(response http.ResponseWriter, request *http.Request) {
-		handler.ServeHTTP(response, request)
+		NewHTTPCompressHandlerFromFunc(handlerFunc).ServeHTTP(response, request)
 	}
 }
 
 // HTTPCompressHandler wraps a http.Handler so that the response gets
 // gzip or deflate compressed if the Accept-Encoding header of the request allows it.
 type HTTPCompressHandler struct {
-	Handler http.Handler
+	http.Handler
+}
+
+func NewHTTPCompressHandler(handler http.Handler) *HTTPCompressHandler {
+	return &HTTPCompressHandler{handler}
+}
+
+func NewHTTPCompressHandlerFromFunc(handler http.HandlerFunc) *HTTPCompressHandler {
+	return &HTTPCompressHandler{handler}
 }
 
 func (h *HTTPCompressHandler) ServeHTTP(response http.ResponseWriter, request *http.Request) {
@@ -64,14 +71,13 @@ func HTTPDelete(url string) (statusCode int, statusText string, err error) {
 // HTTPRespondMarshalJSON marshals response as JSON to responseWriter, sets Content-Type to application/json
 // and compresses the response if Content-Encoding from the request allows it.
 func HTTPRespondMarshalJSON(response interface{}, responseWriter http.ResponseWriter, request *http.Request) (err error) {
-	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+	NewHTTPCompressHandlerFromFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
 		var data []byte
 		if data, err = json.Marshal(response); err == nil {
 			responseWriter.Header().Set("Content-Type", "application/json")
 			_, err = responseWriter.Write(data)
 		}
-	})
-	handlerFunc(responseWriter, request)
+	}).ServeHTTP(responseWriter, request)
 	return err
 }
 
@@ -79,14 +85,13 @@ func HTTPRespondMarshalJSON(response interface{}, responseWriter http.ResponseWr
 // and compresses the response if Content-Encoding from the request allows it.
 // The JSON will be marshalled indented according to json.MarshalIndent
 func HTTPRespondMarshalIndentJSON(response interface{}, prefix, indent string, responseWriter http.ResponseWriter, request *http.Request) (err error) {
-	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+	NewHTTPCompressHandlerFromFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
 		var data []byte
 		if data, err = json.MarshalIndent(response, prefix, indent); err == nil {
 			responseWriter.Header().Set("Content-Type", "application/json")
 			_, err = responseWriter.Write(data)
 		}
-	})
-	handlerFunc(responseWriter, request)
+	}).ServeHTTP(responseWriter, request)
 	return err
 }
 
@@ -94,7 +99,7 @@ func HTTPRespondMarshalIndentJSON(response interface{}, prefix, indent string, r
 // and compresses the response if Content-Encoding from the request allows it.
 // If rootElement is not empty, then an additional root element with this name will be wrapped around the content.
 func HTTPRespondMarshalXML(response interface{}, rootElement string, responseWriter http.ResponseWriter, request *http.Request) (err error) {
-	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+	NewHTTPCompressHandlerFromFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
 		var data []byte
 		if data, err = xml.Marshal(response); err == nil {
 			responseWriter.Header().Set("Content-Type", "application/xml")
@@ -104,8 +109,7 @@ func HTTPRespondMarshalXML(response interface{}, rootElement string, responseWri
 				_, err = fmt.Fprintf(responseWriter, "%s<%s>%s</%s>", xml.Header, rootElement, data, rootElement)
 			}
 		}
-	})
-	handlerFunc(responseWriter, request)
+	}).ServeHTTP(responseWriter, request)
 	return err
 }
 
@@ -114,7 +118,7 @@ func HTTPRespondMarshalXML(response interface{}, rootElement string, responseWri
 // The XML will be marshalled indented according to xml.MarshalIndent.
 // If rootElement is not empty, then an additional root element with this name will be wrapped around the content.
 func HTTPRespondMarshalIndentXML(response interface{}, rootElement string, prefix, indent string, responseWriter http.ResponseWriter, request *http.Request) (err error) {
-	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+	NewHTTPCompressHandlerFromFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
 		var data []byte
 		contentPrefix := prefix
 		if rootElement != "" {
@@ -128,18 +132,16 @@ func HTTPRespondMarshalIndentXML(response interface{}, rootElement string, prefi
 				_, err = fmt.Fprintf(responseWriter, "%s%s%s<%s>\n%s\n%s</%s>", prefix, xml.Header, prefix, rootElement, data, prefix, rootElement)
 			}
 		}
-	})
-	handlerFunc(responseWriter, request)
+	}).ServeHTTP(responseWriter, request)
 	return err
 }
 
 // HTTPRespondText sets Content-Type to text/plain
 // and compresses the response if Content-Encoding from the request allows it.
 func HTTPRespondText(response string, responseWriter http.ResponseWriter, request *http.Request) (err error) {
-	handlerFunc := HTTPCompressHandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+	NewHTTPCompressHandlerFromFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
 		responseWriter.Header().Set("Content-Type", "text/plain")
 		_, err = responseWriter.Write([]byte(response))
-	})
-	handlerFunc(responseWriter, request)
+	}).ServeHTTP(responseWriter, request)
 	return err
 }
