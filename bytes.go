@@ -3,6 +3,7 @@ package dry
 import (
 	"bytes"
 	"compress/flate"
+	"compress/gzip"
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/hex"
@@ -52,18 +53,35 @@ func BytesDecodeHex(hexStr string) string {
 	return string(result)
 }
 
-func BytesZip(str string) []byte {
+func BytesDeflate(uncompressed []byte) (compressed []byte) {
 	var buf bytes.Buffer
 	writer, _ := flate.NewWriter(&buf, flate.BestCompression)
-	writer.Write([]byte(str))
+	writer.Write(uncompressed)
 	writer.Close()
 	return buf.Bytes()
 }
 
-func BytesUnzip(zipped []byte) string {
-	reader := flate.NewReader(bytes.NewBuffer(zipped))
+func BytesInflate(compressed []byte) (uncompressed []byte) {
+	reader := flate.NewReader(bytes.NewBuffer(compressed))
 	result, _ := ioutil.ReadAll(reader)
-	return string(result)
+	return result
+}
+
+func BytesGzip(uncompressed []byte) (compressed []byte) {
+	var buf bytes.Buffer
+	writer := gzip.NewWriter(&buf)
+	writer.Write(uncompressed)
+	writer.Close()
+	return buf.Bytes()
+}
+
+func BytesUnGzip(compressed []byte) (uncompressed []byte) {
+	reader, err := gzip.NewReader(bytes.NewBuffer(compressed))
+	if err != nil {
+		return nil
+	}
+	result, _ := ioutil.ReadAll(reader)
+	return result
 }
 
 // BytesHead returns at most numLines from data starting at the beginning.

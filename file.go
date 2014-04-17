@@ -289,6 +289,18 @@ func FileFind(searchDirs []string, filenames ...string) (filePath string, found 
 	return "", false
 }
 
+func FileFindModified(searchDirs []string, filenames ...string) (filePath string, found bool, modified time.Time) {
+	for _, dir := range searchDirs {
+		for _, filename := range filenames {
+			filePath = path.Join(dir, filename)
+			if t := FileTimeModified(filePath); !t.IsZero() {
+				return filePath, true, t
+			}
+		}
+	}
+	return "", false, time.Time{}
+}
+
 func FileTouch(filename string) error {
 	if FileExists(filename) {
 		now := time.Now()
