@@ -144,6 +144,34 @@ func FileSetCSV(filename string, records [][]string) error {
 	return writer.WriteAll(records)
 }
 
+// FileGetLines returns a string slice with the text lines of filenameOrURL.
+// The lines can be separated by \n or \r\n.
+func FileGetLines(filenameOrURL string, headerTimeout ...time.Duration) (lines []string, err error) {
+	data, err := FileGetBytes(filenameOrURL, headerTimeout...)
+	if err != nil {
+		return nil, err
+	}
+
+	lastR := -1
+	lastN := -1
+
+	for i, c := range data {
+		if c == '\r' {
+			lines = append(lines, string(data[lastN+1:i]))
+			lastR = i
+		}
+		if c == '\n' {
+			if i != lastR+1 {
+				lines = append(lines, string(data[lastN+1:i]))
+			}
+			lastN = i
+		}
+	}
+	lines = append(lines, string(data[lastN+1:]))
+
+	return lines, nil
+}
+
 func FileGetConfig(filenameOrURL string, headerTimeout ...time.Duration) (map[string]string, error) {
 	data, err := FileGetBytes(filenameOrURL, headerTimeout...)
 	if err != nil {
