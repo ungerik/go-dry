@@ -522,23 +522,22 @@ func ListDirDirectories(dir string) ([]string, error) {
 // FileCopy copies file source to destination dest.
 // Based on Jaybill McCarthy's code which can be found at http://jayblog.jaybill.com/post/id/26
 func FileCopy(source string, dest string) (err error) {
-	sf, err := os.Open(source)
+	sourceFile, err := os.Open(source)
 	if err != nil {
 		return err
 	}
-	defer sf.Close()
-	df, err := os.Create(dest)
+	defer sourceFile.Close()
+	destFile, err := os.Create(dest)
 	if err != nil {
 		return err
 	}
-	defer df.Close()
-	_, err = io.Copy(df, sf)
+	defer destFile.Close()
+	_, err = io.Copy(destFile, sourceFile)
 	if err == nil {
 		si, err := os.Stat(source)
-		if err != nil {
+		if err == nil {
 			err = os.Chmod(dest, si.Mode())
 		}
-
 	}
 	return err
 }
@@ -548,11 +547,11 @@ func FileCopy(source string, dest string) (err error) {
 // Based on Jaybill McCarthy's code which can be found at http://jayblog.jaybill.com/post/id/26
 func FileCopyDir(source string, dest string) (err error) {
 	// get properties of source dir
-	fi, err := os.Stat(source)
+	fileInfo, err := os.Stat(source)
 	if err != nil {
 		return err
 	}
-	if !fi.IsDir() {
+	if !fileInfo.IsDir() {
 		return &FileCopyError{"Source is not a directory"}
 	}
 	// ensure dest dir does not already exist
@@ -561,19 +560,19 @@ func FileCopyDir(source string, dest string) (err error) {
 		return &FileCopyError{"Destination already exists"}
 	}
 	// create dest dir
-	err = os.MkdirAll(dest, fi.Mode())
+	err = os.MkdirAll(dest, fileInfo.Mode())
 	if err != nil {
 		return err
 	}
 	entries, err := ioutil.ReadDir(source)
 	for _, entry := range entries {
-		sfp := source + "/" + entry.Name()
-		dfp := dest + "/" + entry.Name()
+		sourcePath := path.Join(source, entry.Name())
+		destinationPath := path.Join(dest, entry.Name())
 		if entry.IsDir() {
-			err = FileCopyDir(sfp, dfp)
+			err = FileCopyDir(sourcePath, destinationPath)
 		} else {
 			// perform copy
-			err = FileCopy(sfp, dfp)
+			err = FileCopy(sourcePath, destinationPath)
 		}
 		if err != nil {
 			return err
