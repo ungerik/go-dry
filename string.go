@@ -3,6 +3,8 @@ package dry
 import (
 	"bytes"
 	"crypto/md5"
+	"crypto/sha1"
+	"encoding/base64"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
@@ -41,10 +43,17 @@ func StringStripHTMLTags(text string) (plainText string) {
 	return string(chars)
 }
 
-func StringMD5(data string) string {
+// StringMD5Hex returns the hex encoded MD5 hash of data
+func StringMD5Hex(data string) string {
 	hash := md5.New()
 	hash.Write([]byte(data))
 	return fmt.Sprintf("%x", hash.Sum(nil))
+}
+
+// StringSHA1Base64 returns the base64 encoded SHA1 hash of data
+func StringSHA1Base64(data string) string {
+	hash := sha1.Sum([]byte(data))
+	return base64.StdEncoding.EncodeToString(hash[:])
 }
 
 func StringAddURLParam(url, name, value string) string {
