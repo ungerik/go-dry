@@ -1,6 +1,7 @@
 package dry
 
 import (
+	"bytes"
 	"fmt"
 )
 
@@ -28,7 +29,7 @@ func Nop(dummiesIn ...interface{}) (dummyOut interface{}) {
 }
 
 // Error returns r as error, converting it when necessary
-func Error(r interface{}) error {
+func AsError(r interface{}) error {
 	if r == nil {
 		return nil
 	}
@@ -58,4 +59,46 @@ func LastError(errs ...error) error {
 		}
 	}
 	return nil
+}
+
+// AsErrorList checks if err is already an ErrorList
+// and returns it if this is the case.
+// Else an ErrorList with err as element is created.
+// Useful if a function potentially returns an ErrorList as error
+// and you want to avoid creating nested ErrorLists.
+func AsErrorList(err error) ErrorList {
+	if list, ok := err.(ErrorList); ok {
+		return list
+	}
+	return ErrorList{err}
+}
+
+// ErrorList holds a slice of errors
+type ErrorList []error
+
+// Error calls fmt.Println for of every error in the list
+// and returns the concernated text.
+func (list ErrorList) Error() string {
+	if len(list) == 0 {
+		return "Empty ErrorList"
+	}
+	var buf bytes.Buffer
+	for _, err := range list {
+		fmt.Fprintln(&buf, err)
+	}
+	return buf.String()
+}
+
+func (list ErrorList) First() error {
+	if len(list) == 0 {
+		return nil
+	}
+	return list[0]
+}
+
+func (list ErrorList) Last() error {
+	if len(list) == 0 {
+		return nil
+	}
+	return list[len(list)-1]
 }
