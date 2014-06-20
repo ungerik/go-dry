@@ -29,18 +29,14 @@ func FileBufferedReader(filenameOrURL string) (io.Reader, error) {
 	return BytesReader(data), nil
 }
 
-func FileGetBytes(filenameOrURL string, headerTimeout ...time.Duration) ([]byte, error) {
+func FileGetBytes(filenameOrURL string, timeout ...time.Duration) ([]byte, error) {
 	if strings.Contains(filenameOrURL, "://") {
 		if strings.Index(filenameOrURL, "file://") == 0 {
 			filenameOrURL = filenameOrURL[len("file://"):]
 		} else {
 			client := http.DefaultClient
-			if len(headerTimeout) > 0 {
-				client = &http.Client{
-					Transport: &http.Transport{
-						ResponseHeaderTimeout: headerTimeout[0],
-					},
-				}
+			if len(timeout) > 0 {
+				client = &http.Client{Timeout: timeout[0]}
 			}
 			r, err := client.Get(filenameOrURL)
 			if err != nil {
@@ -67,8 +63,8 @@ func FileAppendBytes(filename string, data []byte) error {
 	return err
 }
 
-func FileGetString(filenameOrURL string, headerTimeout ...time.Duration) (string, error) {
-	bytes, err := FileGetBytes(filenameOrURL, headerTimeout...)
+func FileGetString(filenameOrURL string, timeout ...time.Duration) (string, error) {
+	bytes, err := FileGetBytes(filenameOrURL, timeout...)
 	if err != nil {
 		return "", err
 	}
@@ -83,13 +79,13 @@ func FileAppendString(filename string, data string) error {
 	return FileAppendBytes(filename, []byte(data))
 }
 
-func FileGetJSON(filenameOrURL string, headerTimeout ...time.Duration) (result interface{}, err error) {
-	err = FileUnmarshallJSON(filenameOrURL, &result, headerTimeout...)
+func FileGetJSON(filenameOrURL string, timeout ...time.Duration) (result interface{}, err error) {
+	err = FileUnmarshallJSON(filenameOrURL, &result, timeout...)
 	return result, err
 }
 
-func FileUnmarshallJSON(filenameOrURL string, result interface{}, headerTimeout ...time.Duration) error {
-	data, err := FileGetBytes(filenameOrURL, headerTimeout...)
+func FileUnmarshallJSON(filenameOrURL string, result interface{}, timeout ...time.Duration) error {
+	data, err := FileGetBytes(filenameOrURL, timeout...)
 	if err != nil {
 		return err
 	}
@@ -104,13 +100,13 @@ func FileSetJSON(filename string, data interface{}) error {
 	return FileSetBytes(filename, bytes)
 }
 
-func FileGetXML(filenameOrURL string, headerTimeout ...time.Duration) (result interface{}, err error) {
-	err = FileUnmarshallXML(filenameOrURL, &result, headerTimeout...)
+func FileGetXML(filenameOrURL string, timeout ...time.Duration) (result interface{}, err error) {
+	err = FileUnmarshallXML(filenameOrURL, &result, timeout...)
 	return result, err
 }
 
-func FileUnmarshallXML(filenameOrURL string, result interface{}, headerTimeout ...time.Duration) error {
-	data, err := FileGetBytes(filenameOrURL, headerTimeout...)
+func FileUnmarshallXML(filenameOrURL string, result interface{}, timeout ...time.Duration) error {
+	data, err := FileGetBytes(filenameOrURL, timeout...)
 	if err != nil {
 		return err
 	}
@@ -125,8 +121,8 @@ func FileSetXML(filename string, data interface{}) error {
 	return FileSetBytes(filename, bytes)
 }
 
-func FileGetCSV(filenameOrURL string, headerTimeout ...time.Duration) ([][]string, error) {
-	data, err := FileGetBytes(filenameOrURL, headerTimeout...)
+func FileGetCSV(filenameOrURL string, timeout ...time.Duration) ([][]string, error) {
+	data, err := FileGetBytes(filenameOrURL, timeout...)
 	if err != nil {
 		return nil, err
 	}
@@ -146,8 +142,8 @@ func FileSetCSV(filename string, records [][]string) error {
 
 // FileGetLines returns a string slice with the text lines of filenameOrURL.
 // The lines can be separated by \n or \r\n.
-func FileGetLines(filenameOrURL string, headerTimeout ...time.Duration) (lines []string, err error) {
-	data, err := FileGetBytes(filenameOrURL, headerTimeout...)
+func FileGetLines(filenameOrURL string, timeout ...time.Duration) (lines []string, err error) {
+	data, err := FileGetBytes(filenameOrURL, timeout...)
 	if err != nil {
 		return nil, err
 	}
@@ -172,8 +168,8 @@ func FileGetLines(filenameOrURL string, headerTimeout ...time.Duration) (lines [
 	return lines, nil
 }
 
-func FileGetConfig(filenameOrURL string, headerTimeout ...time.Duration) (map[string]string, error) {
-	data, err := FileGetBytes(filenameOrURL, headerTimeout...)
+func FileGetConfig(filenameOrURL string, timeout ...time.Duration) (map[string]string, error) {
+	data, err := FileGetBytes(filenameOrURL, timeout...)
 	if err != nil {
 		return nil, err
 	}
@@ -214,8 +210,8 @@ func FileSetConfig(filename string, config map[string]string) error {
 // In case of a network file, the whole file is read.
 // In case of a local file, the last 64kb are read,
 // so if the last line is longer than 64kb it is not returned completely.
-// The first optional headerTimeout is used for network files only.
-func FileGetLastLine(filenameOrURL string, headerTimeout ...time.Duration) (line string, err error) {
+// The first optional timeout is used for network files only.
+func FileGetLastLine(filenameOrURL string, timeout ...time.Duration) (line string, err error) {
 	if strings.Index(filenameOrURL, "file://") == 0 {
 		return FileGetLastLine(filenameOrURL[len("file://"):])
 	}
@@ -223,7 +219,7 @@ func FileGetLastLine(filenameOrURL string, headerTimeout ...time.Duration) (line
 	var data []byte
 
 	if strings.Contains(filenameOrURL, "://") {
-		data, err = FileGetBytes(filenameOrURL, headerTimeout...)
+		data, err = FileGetBytes(filenameOrURL, timeout...)
 		if err != nil {
 			return "", err
 		}
@@ -250,11 +246,11 @@ func FileGetLastLine(filenameOrURL string, headerTimeout ...time.Duration) (line
 	return string(data[pos+1:]), nil
 }
 
-// func FileTail(filenameOrURL string, numLines int, headerTimeout ...time.Duration) (lines []string, err error) {
+// func FileTail(filenameOrURL string, numLines int, timeout ...time.Duration) (lines []string, err error) {
 // 	if strings.Index(filenameOrURL, "file://") == 0 {
 // 		filenameOrURL = filenameOrURL[len("file://"):]
 // 	} else if strings.Contains(filenameOrURL, "://") {
-// 		data, err := FileGetBytes(filenameOrURL, headerTimeout...)
+// 		data, err := FileGetBytes(filenameOrURL, timeout...)
 // 		if err != nil {
 // 			return nil, err
 // 		}
