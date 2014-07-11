@@ -8,12 +8,12 @@ import (
 )
 
 func Test_Error(t *testing.T) {
-	err := Error("TestError")
+	err := AsError("TestError")
 	if err == nil || err.Error() != "TestError" {
 		t.Fail()
 	}
 
-	err = Error(errors.New("TestError"))
+	err = AsError(errors.New("TestError"))
 	if err == nil || err.Error() != "TestError" {
 		t.Fail()
 	}

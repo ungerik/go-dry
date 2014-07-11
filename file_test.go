@@ -16,7 +16,7 @@ func Test_FileGetString(t *testing.T) {
 		t.Fail()
 	}
 
-	str, err = FileGetString("https://raw.github.com/ungerik/go-quick/master/testfile.txt")
+	str, err = FileGetString("https://raw.github.com/ungerik/go-dry/master/testfile.txt")
 	if err != nil {
 		t.Error(err)
 	}
