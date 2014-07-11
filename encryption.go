@@ -9,15 +9,15 @@ import (
 )
 
 var (
-	AES = aesCypherPool{NewSyncPoolMap()}
+	AES = aesCipherPool{NewSyncPoolMap()}
 )
 
 // The pool uses sync.Pool internally.
-type aesCypherPool struct {
+type aesCipherPool struct {
 	poolMap *SyncPoolMap
 }
 
-func (pool *aesCypherPool) forKey(key []byte) *sync.Pool {
+func (pool *aesCipherPool) forKey(key []byte) *sync.Pool {
 	return pool.poolMap.GetOrAddNew(string(key), func() interface{} {
 		block, err := aes.NewCipher(key)
 		if err != nil {
@@ -27,11 +27,11 @@ func (pool *aesCypherPool) forKey(key []byte) *sync.Pool {
 	})
 }
 
-func (pool *aesCypherPool) GetCypher(key []byte) cipher.Block {
+func (pool *aesCipherPool) GetCypher(key []byte) cipher.Block {
 	return pool.forKey(key).Get().(cipher.Block)
 }
 
-func (pool *aesCypherPool) ReturnCypher(key []byte, block cipher.Block) {
+func (pool *aesCipherPool) ReturnCypher(key []byte, block cipher.Block) {
 	pool.forKey(key).Put(block)
 }
 
