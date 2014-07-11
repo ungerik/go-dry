@@ -5,13 +5,43 @@ import (
 	"crypto/cipher"
 	"crypto/rand"
 	"io"
+	"sync"
 )
 
+var (
+	AES = aesCypherPool{NewSyncPoolMap()}
+)
+
+// The pool uses sync.Pool internally.
+type aesCypherPool struct {
+	poolMap *SyncPoolMap
+}
+
+func (pool *aesCypherPool) forKey(key []byte) *sync.Pool {
+	return pool.poolMap.GetOrAddNew(string(key), func() interface{} {
+		block, err := aes.NewCipher(key)
+		if err != nil {
+			panic(err)
+		}
+		return block
+	})
+}
+
+func (pool *aesCypherPool) GetCypher(key []byte) cipher.Block {
+	return pool.forKey(key).Get().(cipher.Block)
+}
+
+func (pool *aesCypherPool) ReturnCypher(key []byte, block cipher.Block) {
+	pool.forKey(key).Put(block)
+}
+
+// EncryptAES encrypts plaintext using AES with the given key.
+// key should be either 16, 24, or 32 bytes to select
+// AES-128, AES-192, or AES-256.
+// plaintext must not be shorter than key.
 func EncryptAES(key []byte, plaintext []byte) []byte {
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		panic(err)
-	}
+	block := AES.GetCypher(key)
+	defer AES.ReturnCypher(key, block)
 
 	// The IV needs to be unique, but not secure. Therefore it's common to
 	// include it at the beginning of the ciphertext.
@@ -27,11 +57,12 @@ func EncryptAES(key []byte, plaintext []byte) []byte {
 	return ciphertext
 }
 
+// DecryptAES decrypts ciphertext using AES with the given key.
+// key should be either 16, 24, or 32 bytes to select
+// AES-128, AES-192, or AES-256.
 func DecryptAES(key []byte, ciphertext []byte) []byte {
-	block, err := aes.NewCipher(key)
-	if err != nil {
-		panic(err)
-	}
+	block := AES.GetCypher(key)
+	defer AES.ReturnCypher(key, block)
 
 	// The IV needs to be unique, but not secure. Therefore it's common to
 	// include it at the beginning of the ciphertext.

@@ -182,8 +182,8 @@ func NewSyncMap() *SyncMap {
 
 func (self *SyncMap) Has(key string) bool {
 	self.mutex.RLock()
-	defer self.mutex.RUnlock()
 	_, ok := self.m[key]
+	self.mutex.RUnlock()
 	return ok
 }
 
@@ -235,4 +235,52 @@ func (self *SyncMap) String(key string) *SyncString {
 
 func (self *SyncMap) AddString(key string, value string) {
 	self.Add(key, NewSyncString(value))
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// SyncPoolMap
+
+type SyncPoolMap struct {
+	mutex sync.RWMutex
+	m     map[string]*sync.Pool
+}
+
+func NewSyncPoolMap() *SyncPoolMap {
+	return &SyncPoolMap{m: make(map[string]*sync.Pool)}
+}
+
+func (self *SyncPoolMap) Has(key string) bool {
+	self.mutex.RLock()
+	_, ok := self.m[key]
+	self.mutex.RUnlock()
+	return ok
+}
+
+func (self *SyncPoolMap) Get(key string) *sync.Pool {
+	self.mutex.RLock()
+	defer self.mutex.RUnlock()
+	return self.m[key]
+}
+
+func (self *SyncPoolMap) Add(key string, value *sync.Pool) {
+	self.mutex.Lock()
+	self.m[key] = value
+	self.mutex.Unlock()
+}
+
+func (self *SyncPoolMap) GetOrAddNew(key string, newFunc func() interface{}) *sync.Pool {
+	self.mutex.Lock()
+	pool := self.m[key]
+	if pool == nil {
+		pool = &sync.Pool{New: newFunc}
+		self.m[key] = pool
+	}
+	self.mutex.Unlock()
+	return pool
+}
+
+func (self *SyncPoolMap) Delete(key string) {
+	self.mutex.Lock()
+	delete(self.m, key)
+	self.mutex.Unlock()
 }
