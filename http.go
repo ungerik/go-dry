@@ -1,8 +1,10 @@
 package dry
 
 import (
+	"bytes"
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -54,6 +56,38 @@ func (h *HTTPCompressHandler) ServeHTTP(response http.ResponseWriter, request *h
 		response = wrappedResponseWriter{Writer: writer, ResponseWriter: response}
 	}
 	h.Handler.ServeHTTP(response, request)
+}
+
+// HTTPPostJSON marshalles data as JSON
+// and sends it as HTTP POST request to url.
+// If the response status code is not 200 OK,
+// then the status is returned as an error.
+func HTTPPostJSON(url string, data interface{}) error {
+	b, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+	response, err := http.Post(url, "application/json", bytes.NewBuffer(b))
+	if err == nil && response.StatusCode != 200 {
+		err = errors.New(response.Status)
+	}
+	return err
+}
+
+// HTTPPostXML marshalles data as XML
+// and sends it as HTTP POST request to url.
+// If the response status code is not 200 OK,
+// then the status is returned as an error.
+func HTTPPostXML(url string, data interface{}) error {
+	b, err := xml.Marshal(data)
+	if err != nil {
+		return err
+	}
+	response, err := http.Post(url, "application/xml", bytes.NewBuffer(b))
+	if err == nil && response.StatusCode != 200 {
+		err = errors.New(response.Status)
+	}
+	return err
 }
 
 func HTTPDelete(url string) (statusCode int, statusText string, err error) {
