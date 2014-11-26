@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode"
 )
 
 func StringPrettifyJSON(compactJSON string) string {
@@ -174,4 +175,48 @@ func StringFormatBigInt(mem uint64) string {
 
 func StringFormatMemory(mem uint64) string {
 	return StringFormatBigInt(mem) + "B"
+}
+
+func StringReplaceMulti(str string, fromTo ...string) string {
+	if len(fromTo)%2 != 0 {
+		panic("Need even number of fromTo arguments")
+	}
+	for i := 0; i < len(fromTo); i += 2 {
+		str = strings.Replace(str, fromTo[i], fromTo[i+1], -1)
+	}
+	return str
+}
+
+func StringToUpperCamelCase(str string) string {
+	var buf bytes.Buffer
+	var last byte = '_'
+	for _, c := range []byte(str) {
+		if c != '_' {
+			if last == '_' {
+				c = byte(unicode.ToUpper(rune(c)))
+			} else {
+				c = byte(unicode.ToLower(rune(c)))
+			}
+			buf.WriteByte(c)
+		}
+		last = c
+	}
+	return buf.String()
+}
+
+func StringToLowerCamelCase(str string) string {
+	var buf bytes.Buffer
+	var last byte
+	for _, c := range []byte(str) {
+		if c != '_' {
+			if last == '_' {
+				c = byte(unicode.ToUpper(rune(c)))
+			} else {
+				c = byte(unicode.ToLower(rune(c)))
+			}
+			buf.WriteByte(c)
+		}
+		last = c
+	}
+	return buf.String()
 }
