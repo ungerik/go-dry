@@ -230,3 +230,67 @@ func StringMapSortedKeys(m map[string]string) []string {
 	sort.Strings(keys)
 	return keys
 }
+
+func StringMapGroupedNumberPostfixSortedKeys(m map[string]string) []string {
+	keys := make(StringGroupedNumberPostfixSorter, 0, len(m))
+	for key := range m {
+		keys = append(keys, key)
+	}
+	sort.Sort(keys)
+	return keys
+}
+
+func StringEndsWithNumber(s string) bool {
+	if s == "" {
+		return false
+	}
+	c := s[len(s)-1]
+	return c >= '0' && c <= '9'
+}
+
+func StringSplitNumberPostfix(s string) (base, number string) {
+	if s == "" {
+		return "", ""
+	}
+	for i := len(s) - 1; i >= 0; i-- {
+		c := s[i]
+		if c < '0' || c > '9' {
+			if i == len(s)-1 {
+				return s, ""
+			}
+			return s[:i+1], s[i+1:]
+		}
+	}
+	return "", s
+}
+
+type StringGroupedNumberPostfixSorter []string
+
+// Len is the number of elements in the collection.
+func (s StringGroupedNumberPostfixSorter) Len() int {
+	return len(s)
+}
+
+// Less reports whether the element with
+// index i should sort before the element with index j.
+func (s StringGroupedNumberPostfixSorter) Less(i, j int) bool {
+	bi, ni := StringSplitNumberPostfix(s[i])
+	bj, nj := StringSplitNumberPostfix(s[j])
+
+	if bi == bj {
+		if len(ni) == len(nj) {
+			inti, _ := strconv.Atoi(ni)
+			intj, _ := strconv.Atoi(nj)
+			return inti < intj
+		} else {
+			return len(ni) < len(nj)
+		}
+	}
+
+	return bi < bj
+}
+
+// Swap swaps the elements with indexes i and j.
+func (s StringGroupedNumberPostfixSorter) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
