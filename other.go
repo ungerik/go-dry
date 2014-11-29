@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func RandSeetWithTime() {
+func RandSeedWithTime() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 

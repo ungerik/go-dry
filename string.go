@@ -240,6 +240,15 @@ func StringMapGroupedNumberPostfixSortedKeys(m map[string]string) []string {
 	return keys
 }
 
+func StringMapGroupedNumberPostfixSortedValues(m map[string]string) []string {
+	values := make(StringGroupedNumberPostfixSorter, 0, len(m))
+	for _, value := range m {
+		values = append(values, value)
+	}
+	sort.Sort(values)
+	return values
+}
+
 func StringEndsWithNumber(s string) bool {
 	if s == "" {
 		return false
