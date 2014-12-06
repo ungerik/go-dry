@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func Test_MapS(t *testing.T) {
-	result := MapS(strings.TrimSpace, []string{"  a  ", " b ", "c", "  d", "e  "})
+func Test_StringMap(t *testing.T) {
+	result := StringMap(strings.TrimSpace, []string{"  a  ", " b ", "c", "  d", "e  "})
 	correct := []string{"a", "b", "c", "d", "e"}
 	if len(result) != len(correct) {
 		t.Fail()
@@ -18,11 +18,11 @@ func Test_MapS(t *testing.T) {
 	}
 }
 
-func Test_FilterS(t *testing.T) {
+func Test_StringFilter(t *testing.T) {
 	hFunc := func(s string) bool {
 		return strings.HasPrefix(s, "h")
 	}
-	result := FilterS(hFunc, []string{"cheese", "mouse", "hi", "there", "horse"})
+	result := StringFilter(hFunc, []string{"cheese", "mouse", "hi", "there", "horse"})
 	correct := []string{"hi", "horse"}
 	if len(result) != len(correct) {
 		t.Fail()

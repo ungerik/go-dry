@@ -137,21 +137,21 @@ func BytesTail(data []byte, numLines int) (lines []string, rest []byte) {
 }
 
 // Map a function on each element of a slice of bytes.
-func MapB(f func(byte) byte, bl []byte) []byte {
-	size := len(bl)
+func BytesMap(f func(byte) byte, data []byte) []byte {
+	size := len(data)
 	result := make([]byte, size, size)
-	for i, _ := range bl {
-		result[i] = f(bl[i])
+	for i, _ := range data {
+		result[i] = f(data[i])
 	}
 	return result
 }
 
 // Filter out all bytes where the function does not return true.
-func FilterB(f func(byte) bool, bl []byte) []byte {
+func BytesFilter(f func(byte) bool, data []byte) []byte {
 	result := make([]byte, 0, 0)
-	for i, _ := range bl {
-		if f(bl[i]) {
-			result = append(result, bl[i])
+	for i, _ := range data {
+		if f(data[i]) {
+			result = append(result, data[i])
 		}
 	}
 	return result

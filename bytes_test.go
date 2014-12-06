@@ -4,11 +4,11 @@ import (
 	"testing"
 )
 
-func Test_MapB(t *testing.T) {
+func Test_BytesMap(t *testing.T) {
 	upper := func(b byte) byte {
 		return b - ('a' - 'A')
 	}
-	result := MapB(upper, []byte("hello"))
+	result := BytesMap(upper, []byte("hello"))
 	correct := []byte("HELLO")
 	if len(result) != len(correct) {
 		t.Fail()
@@ -20,11 +20,11 @@ func Test_MapB(t *testing.T) {
 	}
 }
 
-func Test_FilterB(t *testing.T) {
+func Test_BytesFilter(t *testing.T) {
 	azFunc := func(b byte) bool {
 		return b >= 'A' && b <= 'Z'
 	}
-	result := FilterB(azFunc, []byte{1, 2, 3, 'A', 'f', 'R', 123})
+	result := BytesFilter(azFunc, []byte{1, 2, 3, 'A', 'f', 'R', 123})
 	correct := []byte{'A', 'R'}
 	if len(result) != len(correct) {
 		t.Fail()

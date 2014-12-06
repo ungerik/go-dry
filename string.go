@@ -333,21 +333,21 @@ func (s StringGroupedNumberPostfixSorter) Swap(i, j int) {
 }
 
 // Map a function on each element of a slice of strings.
-func MapS(f func(string) string, sl []string) []string {
-	size := len(sl)
+func StringMap(f func(string) string, data []string) []string {
+	size := len(data)
 	result := make([]string, size, size)
-	for i, _ := range sl {
-		result[i] = f(sl[i])
+	for i, _ := range data {
+		result[i] = f(data[i])
 	}
 	return result
 }
 
 // Filter out all strings where the function does not return true.
-func FilterS(f func(string) bool, sl []string) []string {
+func StringFilter(f func(string) bool, data []string) []string {
 	result := make([]string, 0, 0)
-	for i, _ := range sl {
-		if f(sl[i]) {
-			result = append(result, sl[i])
+	for i, _ := range data {
+		if f(data[i]) {
+			result = append(result, data[i])
 		}
 	}
 	return result
