@@ -331,3 +331,24 @@ func (s StringGroupedNumberPostfixSorter) Less(i, j int) bool {
 func (s StringGroupedNumberPostfixSorter) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
+
+/* Map a function on each element of a slice of strings */
+func MapS(f func(string) string, sl []string) []string {
+	size := len(sl)
+	result := make([]string, size, size)
+	for i, _ := range sl {
+		result[i] = f(sl[i])
+	}
+	return result
+}
+
+/* Filter out all strings where the function does not return true */
+func FilterS(f func(string) bool, sl []string) []string {
+	result := make([]string, 0, 0)
+	for i, _ := range sl {
+		if f(sl[i]) {
+			result = append(result, sl[i])
+		}
+	}
+	return result
+}
