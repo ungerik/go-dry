@@ -273,6 +273,34 @@ func StringSplitNumberPostfix(s string) (base, number string) {
 	return "", s
 }
 
+func StringSplitOnce(s, sep string) (pre, post string) {
+	parts := strings.SplitN(s, sep, 1)
+	if len(parts) == 2 {
+		return parts[0], parts[1]
+	} else {
+		return parts[0], ""
+	}
+}
+
+func StringSplitOnceChar(s string, sep rune) (pre, post string) {
+	sepIndex := -1
+	postSepIndex := -1
+	for i, c := range s {
+		if sepIndex != -1 {
+			postSepIndex = i
+			break // we got the index after the sep rune
+		}
+		if c == sep {
+			sepIndex = i
+			// continue to get index after the current UTF8 rune
+		}
+	}
+	if sepIndex == -1 {
+		return s, ""
+	}
+	return s[:sepIndex], s[postSepIndex:]
+}
+
 type StringGroupedNumberPostfixSorter []string
 
 // Len is the number of elements in the collection.
