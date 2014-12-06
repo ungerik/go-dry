@@ -282,7 +282,7 @@ func StringSplitOnce(s, sep string) (pre, post string) {
 	}
 }
 
-func StringSplitOnceChar(s string, sep rune) (pre, post string) {
+func StringSplitOnceRune(s string, sep rune) (pre, post string) {
 	sepIndex := -1
 	postSepIndex := -1
 	for i, c := range s {
