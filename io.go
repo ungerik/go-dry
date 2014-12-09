@@ -2,6 +2,7 @@ package dry
 
 import (
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"os"
@@ -46,6 +47,14 @@ func (rw *CountingReadWriter) Write(p []byte) (n int, err error) {
 	n, err = rw.ReadWriter.Write(p)
 	rw.BytesWritten += n
 	return n, err
+}
+
+// ReadBinary wraps binary.Read with a CountingReader and returns
+// the acutal bytes read by it.
+func ReadBinary(r io.Reader, order binary.ByteOrder, data interface{}) (n int, err error) {
+	countingReader := CountingReader{Reader: r}
+	err = binary.Read(&countingReader, order, data)
+	return countingReader.BytesRead, err
 }
 
 // WriteFull calls writer.Write until all of data is written,
