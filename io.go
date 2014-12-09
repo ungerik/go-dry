@@ -4,14 +4,48 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"math/rand"
 	"os"
 	"strings"
-	"time"
 )
 
-func RandSeedWithTime() {
-	rand.Seed(time.Now().UTC().UnixNano())
+type CountingReader struct {
+	Reader    io.Reader
+	BytesRead int
+}
+
+func (r *CountingReader) Read(p []byte) (n int, err error) {
+	n, err = r.Reader.Read(p)
+	r.BytesRead += n
+	return n, err
+}
+
+type CountingWriter struct {
+	Writer       io.Writer
+	BytesWritten int
+}
+
+func (r *CountingWriter) Write(p []byte) (n int, err error) {
+	n, err = r.Writer.Write(p)
+	r.BytesWritten += n
+	return n, err
+}
+
+type CountingReadWriter struct {
+	ReadWriter   io.ReadWriter
+	BytesRead    int
+	BytesWritten int
+}
+
+func (rw *CountingReadWriter) Read(p []byte) (n int, err error) {
+	n, err = rw.ReadWriter.Read(p)
+	rw.BytesRead += n
+	return n, err
+}
+
+func (rw *CountingReadWriter) Write(p []byte) (n int, err error) {
+	n, err = rw.ReadWriter.Write(p)
+	rw.BytesWritten += n
+	return n, err
 }
 
 // WriteFull calls writer.Write until all of data is written,
