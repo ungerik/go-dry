@@ -14,21 +14,18 @@ func RandSeedWithTime() {
 	rand.Seed(time.Now().UTC().UnixNano())
 }
 
-// WriteAllBytes calls writer.Write until all of data is written,
+// WriteFull calls writer.Write until all of data is written,
 // or an is error returned.
-func WriteAllBytes(data []byte, writer io.Writer) error {
-	n, err := writer.Write(data)
-	if err != nil {
-		return err
-	}
+func WriteFull(data []byte, writer io.Writer) (n int, err error) {
 	dataSize := len(data)
-	for i := n; i < dataSize; i += n {
-		n, err = writer.Write(data[i:])
+	for n = 0; n < dataSize; {
+		m, err := writer.Write(data[n:])
+		n += m
 		if err != nil {
-			return err
+			return n, err
 		}
 	}
-	return nil
+	return dataSize, nil
 }
 
 // ReadLine reads unbuffered until a newline '\n' byte and removes

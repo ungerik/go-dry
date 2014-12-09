@@ -393,7 +393,7 @@ func FileSetDeflate(filename string, data []byte) error {
 	if err != nil {
 		return err
 	}
-	err = WriteAllBytes(data, writer)
+	_, err = WriteFull(data, writer)
 	if err != nil {
 		return err
 	}
@@ -425,7 +425,7 @@ func FileSetGz(filename string, data []byte) error {
 	if err != nil {
 		return err
 	}
-	err = WriteAllBytes(data, writer)
+	_, err = WriteFull(data, writer)
 	if err != nil {
 		return err
 	}
