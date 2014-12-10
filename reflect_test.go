@@ -34,3 +34,54 @@ func Test_ReflectSort(t *testing.T) {
 		t.Fail()
 	}
 }
+
+type TestStruct struct {
+	String  string
+	Int     int
+	Uint8   uint8
+	Float32 float32
+	Bool    bool
+}
+
+func Test_ReflectSetStructFieldsFromStringMap(t *testing.T) {
+	structPtr := new(TestStruct)
+	m := map[string]string{
+		"String":  "Hello World",
+		"Int":     "666",
+		"Uint8":   "234",
+		"Float32": "0.01",
+		"Bool":    "true",
+	}
+	err := ReflectSetStructFieldsFromStringMap(structPtr, m, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if structPtr.String != "Hello World" ||
+		structPtr.Int != 666 ||
+		structPtr.Uint8 != 234 ||
+		structPtr.Float32 != 0.01 ||
+		structPtr.Bool != true {
+		t.Fatalf("Invalid values: %#v", structPtr)
+	}
+
+	m["NotExisting"] = "xxx"
+
+	structPtr = new(TestStruct)
+	err = ReflectSetStructFieldsFromStringMap(structPtr, m, true)
+	if err == nil {
+		t.Fail()
+	}
+
+	structPtr = new(TestStruct)
+	err = ReflectSetStructFieldsFromStringMap(structPtr, m, false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if structPtr.String != "Hello World" ||
+		structPtr.Int != 666 ||
+		structPtr.Uint8 != 234 ||
+		structPtr.Float32 != 0.01 ||
+		structPtr.Bool != true {
+		t.Fatalf("Invalid values: %#v", structPtr)
+	}
+}

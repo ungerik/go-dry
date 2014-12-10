@@ -12,6 +12,34 @@ func ReflectTypeOfError() reflect.Type {
 	return reflect.TypeOf((*error)(nil)).Elem()
 }
 
+// ReflectSetStructFieldsFromStringMap sets the fields of a struct
+// with the field names and values taken from a map[string]string.
+// If errOnMissingField is true, then all fields must exist.
+func ReflectSetStructFieldsFromStringMap(structPtr interface{}, m map[string]string, errOnMissingField bool) error {
+	v := reflect.ValueOf(structPtr)
+	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Struct {
+		return fmt.Errorf("structPtr must be pointer to a struct, but is %T", structPtr)
+	}
+	v = v.Elem()
+
+	for name, value := range m {
+		if f := v.FieldByName(name); f.IsValid() {
+			if f.Kind() == reflect.String {
+				f.SetString(value)
+			} else {
+				_, err := fmt.Sscan(value, f.Addr().Interface())
+				if err != nil {
+					return err
+				}
+			}
+		} else if errOnMissingField {
+			return fmt.Errorf("%T has no struct field '%s'", v.Interface(), name)
+		}
+	}
+
+	return nil
+}
+
 /*
 ExportedStructFields returns a map from exported struct field names to values,
 inlining anonymous sub-structs so that their field names are available
@@ -25,7 +53,7 @@ Example:
 		Y int
 	}
 	// Yields X and Y instead of A and Y:
-	InlineAnonymousStructFields(reflect.ValueOf(B{}))
+	ReflectExportedStructFields(reflect.ValueOf(B{}))
 */
 func ReflectExportedStructFields(v reflect.Value) map[string]reflect.Value {
 	t := v.Type()
