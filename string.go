@@ -282,6 +282,14 @@ func StringSplitOnce(s, sep string) (pre, post string) {
 	}
 }
 
+func StringSplitOnceChar(s string, sep byte) (pre, post string) {
+	i := strings.IndexByte(s, sep)
+	if i == -1 {
+		return s, ""
+	}
+	return s[:i], s[i+1:]
+}
+
 func StringSplitOnceRune(s string, sep rune) (pre, post string) {
 	sepIndex := -1
 	postSepIndex := -1
