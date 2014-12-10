@@ -12,6 +12,30 @@ func ReflectTypeOfError() reflect.Type {
 	return reflect.TypeOf((*error)(nil)).Elem()
 }
 
+// ReflectSetStructFieldString sets the field with name to value.
+func ReflectSetStructFieldString(structPtr interface{}, name, value string) error {
+	v := reflect.ValueOf(structPtr)
+	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Struct {
+		return fmt.Errorf("structPtr must be pointer to a struct, but is %T", structPtr)
+	}
+	v = v.Elem()
+
+	if f := v.FieldByName(name); f.IsValid() {
+		if f.Kind() == reflect.String {
+			f.SetString(value)
+		} else {
+			_, err := fmt.Sscan(value, f.Addr().Interface())
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		return fmt.Errorf("%T has no struct field '%s'", v.Interface(), name)
+	}
+
+	return nil
+}
+
 // ReflectSetStructFieldsFromStringMap sets the fields of a struct
 // with the field names and values taken from a map[string]string.
 // If errOnMissingField is true, then all fields must exist.
