@@ -33,3 +33,41 @@ func Test_StringFilter(t *testing.T) {
 		}
 	}
 }
+
+func Text_StringFindBetween(t *testing.T) {
+	s := "Hello <em>World</em>!"
+
+	between, remainder, found := StringFindBetween(s, "<em>", "</em>")
+	if between != "World" {
+		t.Fail()
+	}
+	if remainder != "!" {
+		t.Fail()
+	}
+	if !found {
+		t.Fail()
+	}
+
+	between, remainder, found = StringFindBetween(s, "l", "l")
+	if between != "" {
+		t.Fail()
+	}
+	if remainder != "o <em>World</em>!" {
+		t.Fail()
+	}
+	if !found {
+		t.Fail()
+	}
+
+	between, remainder, found = StringFindBetween(s, "<i>", "</i>")
+	if between != "" {
+		t.Fail()
+	}
+	if remainder != "Hello <em>World</em>!" {
+		t.Fail()
+	}
+	if found {
+		t.Fail()
+	}
+
+}

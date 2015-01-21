@@ -360,3 +360,19 @@ func StringFilter(f func(string) bool, data []string) []string {
 	}
 	return result
 }
+
+// StringFindBetween returns the string between the first occurrences of the tokens start and stop.
+// The remainder of the string after the stop token will be returned if found.
+// If the tokens couldn't be found, then the whole string will be returned as remainder.
+func StringFindBetween(s, start, stop string) (between, remainder string, found bool) {
+	begin := strings.Index(s, start)
+	if begin == -1 {
+		return "", s, false
+	}
+	between = s[begin+len(start):]
+	end := strings.Index(between, stop)
+	if end == -1 {
+		return "", s, false
+	}
+	return between[:end], s[begin+len(start)+end+len(stop):], true
+}
