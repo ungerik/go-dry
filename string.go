@@ -376,3 +376,14 @@ func StringFindBetween(s, start, stop string) (between, remainder string, found 
 	}
 	return between[:end], s[begin+len(start)+end+len(stop):], true
 }
+
+// StringFind returns in found if token has been found in s,
+// and returns the remaining string afte token in remainder.
+// The whole string s will be returned if found is false.
+func StringFind(s, token string) (remainder string, found bool) {
+	i := strings.Index(s, token)
+	if i == -1 {
+		return s, false
+	}
+	return s[i+len(token):], true
+}
