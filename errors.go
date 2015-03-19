@@ -71,7 +71,27 @@ func AsErrorList(err error) ErrorList {
 	return ErrorList{err}
 }
 
-// ErrorList holds a slice of errors
+/*
+ErrorList holds a slice of errors.
+
+Usage example:
+
+	func maybeError() (int, error) {
+		return
+	}
+
+	func main() {
+		e := NewErrorList(maybeError())
+		e.Collect(maybeError())
+		e.Collect(maybeError())
+
+		if e.Err() != nil {
+			fmt.Println("Some calls of maybeError() returned errors:", e)
+		} else {
+			fmt.Println("No call of maybeError() returned an error")
+		}
+	}
+*/
 type ErrorList []error
 
 // NewErrorList returns an ErrorList where Collect has been called for args.
