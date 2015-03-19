@@ -9,10 +9,8 @@ import (
 // of the passed values is a non nil error
 func PanicIfErr(values ...interface{}) {
 	for _, v := range values {
-		if err, ok := v.(error); ok {
-			if err != nil {
-				panic(fmt.Errorf("Panicking because of error: %s\nAt:\n%s\n", err, StackTrace(2)))
-			}
+		if err, _ := v.(error); err != nil {
+			panic(fmt.Errorf("Panicking because of error: %s\nAt:\n%s\n", err, StackTrace(2)))
 		}
 	}
 }
@@ -76,8 +74,17 @@ func AsErrorList(err error) ErrorList {
 // ErrorList holds a slice of errors
 type ErrorList []error
 
+// NewErrorList returns an ErrorList where Collect has been called for args.
+// The returned list will be nil if there was no non nil error in args.
+// Note that alle methods of ErrorList can be called with a nil ErrorList.
+func NewErrorList(args ...interface{}) (list ErrorList) {
+	list.Collect(args...)
+	return list
+}
+
 // Error calls fmt.Println for of every error in the list
 // and returns the concernated text.
+// Can be called for a nil ErrorList.
 func (list ErrorList) Error() string {
 	if len(list) == 0 {
 		return "Empty ErrorList"
@@ -89,6 +96,18 @@ func (list ErrorList) Error() string {
 	return buf.String()
 }
 
+// Err returns the list if it is not empty,
+// or nil if it is empty.
+// Can be called for a nil ErrorList.
+func (list ErrorList) Err() error {
+	if len(list) == 0 {
+		return nil
+	}
+	return list
+}
+
+// First returns the first error in the list or nil.
+// Can be called for a nil ErrorList.
 func (list ErrorList) First() error {
 	if len(list) == 0 {
 		return nil
@@ -96,9 +115,20 @@ func (list ErrorList) First() error {
 	return list[0]
 }
 
+// Last returns the last error in the list or nil.
+// Can be called for a nil ErrorList.
 func (list ErrorList) Last() error {
 	if len(list) == 0 {
 		return nil
 	}
 	return list[len(list)-1]
+}
+
+// Collect adds any non nil errors in args to the list.
+func (list *ErrorList) Collect(args ...interface{}) {
+	for _, a := range args {
+		if err, _ := a.(error); err != nil {
+			*list = append(*list, err)
+		}
+	}
 }
