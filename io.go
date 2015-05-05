@@ -105,3 +105,17 @@ func WaitForStdin(println ...interface{}) byte {
 	os.Stdin.Read(buffer)
 	return buffer[0]
 }
+
+// ReaderFunc implements io.Reader as function type with a Read method.
+type ReaderFunc func(p []byte) (int, error)
+
+func (f ReaderFunc) Read(p []byte) (int, error) {
+	return f(p)
+}
+
+// WriterFunc implements io.Writer as function type with a Write method.
+type WriterFunc func(p []byte) (int, error)
+
+func (f WriterFunc) Write(p []byte) (int, error) {
+	return f(p)
+}
