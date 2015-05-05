@@ -78,11 +78,14 @@ func ReadLine(reader io.Reader) (line string, err error) {
 	buffer := bytes.NewBuffer(make([]byte, 0, 4096))
 	p := make([]byte, 1)
 	for {
-		_, err = reader.Read(p)
+		var n int
+		n, err = reader.Read(p)
 		if err != nil || p[0] == '\n' {
 			break
 		}
-		buffer.Write(p)
+		if n > 0 {
+			buffer.Write(p)
+		}
 	}
 	line = strings.TrimSuffix(buffer.String(), "\r")
 	return line, err
