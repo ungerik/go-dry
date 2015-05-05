@@ -83,7 +83,7 @@ func ReadLine(reader io.Reader) (line string, err error) {
 			break
 		}
 		if n > 0 {
-			buffer.Write(p)
+			buffer.WriteByte(p[0])
 		}
 	}
 	data := buffer.Bytes()
