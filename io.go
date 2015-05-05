@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
 )
 
 type CountingReader struct {
@@ -87,8 +86,11 @@ func ReadLine(reader io.Reader) (line string, err error) {
 			buffer.Write(p)
 		}
 	}
-	line = strings.TrimSuffix(buffer.String(), "\r")
-	return line, err
+	data := buffer.Bytes()
+	if len(data) > 0 && data[len(data)-1] == '\r' {
+		data = data[:len(data)-1]
+	}
+	return string(data), err
 }
 
 // WaitForStdin blocks until input is available from os.Stdin.
