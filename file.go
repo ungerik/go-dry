@@ -153,17 +153,57 @@ func FileGetLines(filenameOrURL string, timeout ...time.Duration) (lines []strin
 
 	for i, c := range data {
 		if c == '\r' {
-			lines = append(lines, string(data[lastN+1:i]))
+			l := string(data[lastN+1 : i])
+			lines = append(lines, l)
 			lastR = i
 		}
 		if c == '\n' {
 			if i != lastR+1 {
-				lines = append(lines, string(data[lastN+1:i]))
+				l := string(data[lastN+1 : i])
+				lines = append(lines, l)
 			}
 			lastN = i
 		}
 	}
-	lines = append(lines, string(data[lastN+1:]))
+	l := string(data[lastN+1:])
+	lines = append(lines, l)
+
+	return lines, nil
+}
+
+// FileGetNonEmptyLines returns a string slice with the non empty text lines of filenameOrURL.
+// The lines can be separated by \n or \r\n.
+func FileGetNonEmptyLines(filenameOrURL string, timeout ...time.Duration) (lines []string, err error) {
+	data, err := FileGetBytes(filenameOrURL, timeout...)
+	if err != nil {
+		return nil, err
+	}
+
+	lastR := -1
+	lastN := -1
+
+	for i, c := range data {
+		if c == '\r' {
+			l := string(data[lastN+1 : i])
+			if l != "" {
+				lines = append(lines, l)
+			}
+			lastR = i
+		}
+		if c == '\n' {
+			if i != lastR+1 {
+				l := string(data[lastN+1 : i])
+				if l != "" {
+					lines = append(lines, l)
+				}
+			}
+			lastN = i
+		}
+	}
+	l := string(data[lastN+1:])
+	if l != "" {
+		lines = append(lines, l)
+	}
 
 	return lines, nil
 }
