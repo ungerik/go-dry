@@ -171,6 +171,10 @@ func FileGetLines(filenameOrURL string, timeout ...time.Duration) (lines []strin
 	return lines, nil
 }
 
+func FileSetLines(filename string, lines []string) error {
+	return FileSetString(filename, strings.Join(lines, "\n"))
+}
+
 // FileGetNonEmptyLines returns a string slice with the non empty text lines of filenameOrURL.
 // The lines can be separated by \n or \r\n.
 func FileGetNonEmptyLines(filenameOrURL string, timeout ...time.Duration) (lines []string, err error) {
