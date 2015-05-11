@@ -16,6 +16,25 @@ import (
 	"unicode"
 )
 
+func StringListContains(l []string, s string) bool {
+	for i := range l {
+		if l[i] == s {
+			return true
+		}
+	}
+	return false
+}
+
+func StringListContainsCaseInsensitive(l []string, s string) bool {
+	s = strings.ToLower(s)
+	for i := range l {
+		if strings.ToLower(l[i]) == s {
+			return true
+		}
+	}
+	return false
+}
+
 func StringPrettifyJSON(compactJSON string) string {
 	var buf bytes.Buffer
 	err := json.Indent(&buf, []byte(compactJSON), "", "\t")
