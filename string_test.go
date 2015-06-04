@@ -71,3 +71,21 @@ func Text_StringFindBetween(t *testing.T) {
 	}
 
 }
+
+func Test_StringStripHTMLTags(t *testing.T) {
+	withHTML := "<div>Hello > World <br/> <im src='xxx'/>"
+	skippedHTML := "Hello > World  "
+
+	if StringStripHTMLTags(withHTML) != skippedHTML {
+		t.Fail()
+	}
+}
+
+func Test_StringReplaceHTMLTags(t *testing.T) {
+	withHTML := "<div>Hello > World <br/> <im src='xxx'/>"
+	replacedHTML := "xxHello > World xx xx"
+
+	if StringReplaceHTMLTags(withHTML, "xx") != replacedHTML {
+		t.Fail()
+	}
+}

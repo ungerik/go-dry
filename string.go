@@ -50,18 +50,55 @@ func StringEscapeJSON(jsonString string) string {
 	return jsonString
 }
 
+// StringStripHTMLTags strips HTML/XML tags from text.
 func StringStripHTMLTags(text string) (plainText string) {
-	chars := []byte(text)
+	var buf *bytes.Buffer
+	tagClose := -1
 	tagStart := -1
-	for i := 0; i < len(chars); i++ {
-		if chars[i] == '<' {
+	for i, char := range text {
+		if char == '<' {
+			if buf == nil {
+				buf = bytes.NewBufferString(text)
+				buf.Reset()
+			}
+			buf.WriteString(text[tagClose+1 : i])
 			tagStart = i
-		} else if chars[i] == '>' && tagStart != -1 {
-			chars = append(chars[:tagStart], chars[i+1:]...)
-			i, tagStart = tagStart-1, -1
+		} else if char == '>' && tagStart != -1 {
+			tagClose = i
+			tagStart = -1
 		}
 	}
-	return string(chars)
+	if buf == nil {
+		return text
+	}
+	buf.WriteString(text[tagClose+1:])
+	return buf.String()
+}
+
+// StringReplaceHTMLTags replaces HTML/XML tags from text with replacement.
+func StringReplaceHTMLTags(text, replacement string) (plainText string) {
+	var buf *bytes.Buffer
+	tagClose := -1
+	tagStart := -1
+	for i, char := range text {
+		if char == '<' {
+			if buf == nil {
+				buf = bytes.NewBufferString(text)
+				buf.Reset()
+			}
+			buf.WriteString(text[tagClose+1 : i])
+			tagStart = i
+		} else if char == '>' && tagStart != -1 {
+			buf.WriteString(replacement)
+			tagClose = i
+			tagStart = -1
+		}
+	}
+	if buf == nil {
+		return text
+	}
+	buf.WriteString(text[tagClose+1:])
+	return buf.String()
 }
 
 // StringMD5Hex returns the hex encoded MD5 hash of data
