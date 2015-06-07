@@ -400,7 +400,7 @@ func (s StringGroupedNumberPostfixSorter) Swap(i, j int) {
 func StringMap(f func(string) string, data []string) []string {
 	size := len(data)
 	result := make([]string, size, size)
-	for i, _ := range data {
+	for i := 0; i < size; i++ {
 		result[i] = f(data[i])
 	}
 	return result
@@ -409,9 +409,9 @@ func StringMap(f func(string) string, data []string) []string {
 // Filter out all strings where the function does not return true.
 func StringFilter(f func(string) bool, data []string) []string {
 	result := make([]string, 0, 0)
-	for i, _ := range data {
-		if f(data[i]) {
-			result = append(result, data[i])
+	for _, element := range data {
+		if f(element) {
+			result = append(result, element)
 		}
 	}
 	return result

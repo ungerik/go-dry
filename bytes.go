@@ -140,7 +140,7 @@ func BytesTail(data []byte, numLines int) (lines []string, rest []byte) {
 func BytesMap(f func(byte) byte, data []byte) []byte {
 	size := len(data)
 	result := make([]byte, size, size)
-	for i, _ := range data {
+	for i := 0; i < size; i++ {
 		result[i] = f(data[i])
 	}
 	return result
@@ -149,9 +149,9 @@ func BytesMap(f func(byte) byte, data []byte) []byte {
 // Filter out all bytes where the function does not return true.
 func BytesFilter(f func(byte) bool, data []byte) []byte {
 	result := make([]byte, 0, 0)
-	for i, _ := range data {
-		if f(data[i]) {
-			result = append(result, data[i])
+	for _, element := range data {
+		if f(element) {
+			result = append(result, element)
 		}
 	}
 	return result
