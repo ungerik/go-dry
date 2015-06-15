@@ -28,10 +28,11 @@ func (self *SyncBool) Set(value bool) {
 	self.mutex.Unlock()
 }
 
-func (self *SyncBool) Invert() {
+func (self *SyncBool) Invert() bool {
 	self.mutex.Lock()
+	defer self.mutex.Unlock()
 	self.value = !self.value
-	self.mutex.Unlock()
+	return self.value
 }
 
 func (self *SyncBool) Swap(value bool) bool {
@@ -66,16 +67,18 @@ func (self *SyncInt) Set(value int) {
 	self.mutex.Unlock()
 }
 
-func (self *SyncInt) Add(value int) {
+func (self *SyncInt) Add(value int) int {
 	self.mutex.Lock()
+	defer self.mutex.Unlock()
 	self.value += value
-	self.mutex.Unlock()
+	return self.value
 }
 
-func (self *SyncInt) Mul(value int) {
+func (self *SyncInt) Mul(value int) int {
 	self.mutex.Lock()
+	defer self.mutex.Unlock()
 	self.value *= value
-	self.mutex.Unlock()
+	return self.value
 }
 
 func (self *SyncInt) Swap(value int) int {
@@ -110,10 +113,11 @@ func (self *SyncString) Set(value string) {
 	self.mutex.Unlock()
 }
 
-func (self *SyncString) Append(value string) {
+func (self *SyncString) Append(value string) string {
 	self.mutex.Lock()
+	defer self.mutex.Unlock()
 	self.value += value
-	self.mutex.Unlock()
+	return self.value
 }
 
 func (self *SyncString) Swap(value string) string {
@@ -148,16 +152,18 @@ func (self *SyncFloat) Set(value float64) {
 	self.mutex.Unlock()
 }
 
-func (self *SyncFloat) Add(value float64) {
+func (self *SyncFloat) Add(value float64) float64 {
 	self.mutex.Lock()
+	defer self.mutex.Unlock()
 	self.value += value
-	self.mutex.Unlock()
+	return self.value
 }
 
-func (self *SyncFloat) Mul(value float64) {
+func (self *SyncFloat) Mul(value float64) float64 {
 	self.mutex.Lock()
+	defer self.mutex.Unlock()
 	self.value *= value
-	self.mutex.Unlock()
+	return self.value
 }
 
 func (self *SyncFloat) Swap(value float64) float64 {
