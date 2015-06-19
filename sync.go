@@ -244,6 +244,43 @@ func (self *SyncMap) AddString(key string, value string) {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// SyncStringMap
+
+type SyncStringMap struct {
+	mutex sync.RWMutex
+	m     map[string]string
+}
+
+func NewSyncStringMap() *SyncStringMap {
+	return &SyncStringMap{m: make(map[string]string)}
+}
+
+func (self *SyncStringMap) Has(key string) bool {
+	self.mutex.RLock()
+	_, ok := self.m[key]
+	self.mutex.RUnlock()
+	return ok
+}
+
+func (self *SyncStringMap) Get(key string) string {
+	self.mutex.RLock()
+	defer self.mutex.RUnlock()
+	return self.m[key]
+}
+
+func (self *SyncStringMap) Add(key string, value string) {
+	self.mutex.Lock()
+	self.m[key] = value
+	self.mutex.Unlock()
+}
+
+func (self *SyncStringMap) Delete(key string) {
+	self.mutex.Lock()
+	delete(self.m, key)
+	self.mutex.Unlock()
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // SyncPoolMap
 
 type SyncPoolMap struct {
