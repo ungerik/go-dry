@@ -26,7 +26,7 @@ func Nop(dummiesIn ...interface{}) (dummyOut interface{}) {
 	return nil
 }
 
-// Error returns r as error, converting it when necessary
+// AsError returns r as error, converting it when necessary
 func AsError(r interface{}) error {
 	if r == nil {
 		return nil
