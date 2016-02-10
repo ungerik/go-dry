@@ -100,6 +100,14 @@ func FileSetJSON(filename string, data interface{}) error {
 	return FileSetBytes(filename, bytes)
 }
 
+func FileSetJSONIndent(filename string, data interface{}, indent string) error {
+	bytes, err := json.MarshalIndent(data, "", indent)
+	if err != nil {
+		return err
+	}
+	return FileSetBytes(filename, bytes)
+}
+
 func FileGetXML(filenameOrURL string, timeout ...time.Duration) (result interface{}, err error) {
 	err = FileUnmarshallXML(filenameOrURL, &result, timeout...)
 	return result, err
