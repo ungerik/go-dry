@@ -187,5 +187,6 @@ func HTTPUnmarshalRequestBodyJSON(request *http.Request, result interface{}) err
 	if err != nil {
 		return err
 	}
+	defer request.Body.Close()
 	return json.Unmarshal(body, result)
 }
