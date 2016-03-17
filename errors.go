@@ -6,24 +6,28 @@ import (
 )
 
 // PanicIfErr panics with a stack trace if any
-// of the passed values is a non nil error
-func PanicIfErr(values ...interface{}) {
-	for _, v := range values {
+// of the passed args is a non nil error
+func PanicIfErr(args ...interface{}) {
+	for _, v := range args {
 		if err, _ := v.(error); err != nil {
 			panic(fmt.Errorf("Panicking because of error: %s\nAt:\n%s\n", err, StackTrace(2)))
 		}
 	}
 }
 
-// Nop is a dummy function that can be called in source files where
-// other debug functions are constantly added and removed.
-// That way import "github.com/ungerik/go-quick" won't cause an error when
-// no other debug function is currently used.
-// Arbitrary objects can be passed as arguments to avoid "declared and not used"
-// error messages when commenting code out and in.
-// The result is a nil interface{} dummy value.
-func Nop(dummiesIn ...interface{}) (dummyOut interface{}) {
-	return nil
+// GetError returns the last argument that is of type error,
+// panics if none of the passed args is of type error.
+// Note that GetError(nil) will panic because nil is not of type error but interface{}
+func GetError(args ...interface{}) error {
+	for i := len(args) - 1; i >= 0; i-- {
+		arg := args[i]
+		if arg != nil {
+			if err, ok := arg.(error); ok {
+				return err
+			}
+		}
+	}
+	panic("no argument of type error")
 }
 
 // AsError returns r as error, converting it when necessary
@@ -31,14 +35,13 @@ func AsError(r interface{}) error {
 	if r == nil {
 		return nil
 	}
-	if err, _ := r.(error); err != nil {
+	if err, ok := r.(error); ok {
 		return err
-	} else {
-		return fmt.Errorf("%v", r)
 	}
+	return fmt.Errorf("%v", r)
 }
 
-// Returns the first non nil error, or nil
+// FirstError returns the first non nil error, or nil
 func FirstError(errs ...error) error {
 	for _, err := range errs {
 		if err != nil {
@@ -48,7 +51,7 @@ func FirstError(errs ...error) error {
 	return nil
 }
 
-// Returns the last non nil error, or nil
+// LastError returns the last non nil error, or nil
 func LastError(errs ...error) error {
 	for i := len(errs) - 1; i >= 0; i-- {
 		err := errs[i]

@@ -8,6 +8,17 @@ import (
 	"sync"
 )
 
+// Nop is a dummy function that can be called in source files where
+// other debug functions are constantly added and removed.
+// That way import "github.com/ungerik/go-quick" won't cause an error when
+// no other debug function is currently used.
+// Arbitrary objects can be passed as arguments to avoid "declared and not used"
+// error messages when commenting code out and in.
+// The result is a nil interface{} dummy value.
+func Nop(dummiesIn ...interface{}) (dummyOut interface{}) {
+	return nil
+}
+
 func StackTrace(skipFrames int) string {
 	buf := new(bytes.Buffer) // the returned data
 	var lastFile string
