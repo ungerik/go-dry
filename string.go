@@ -16,6 +16,15 @@ import (
 	"unicode"
 )
 
+// StringMarshalJSON marshals data to an indented string.
+func StringMarshalJSON(data interface{}, indent string) string {
+	buffer, err := json.MarshalIndent(data, "", indent)
+	if err != nil {
+		return ""
+	}
+	return string(buffer)
+}
+
 func StringListContains(l []string, s string) bool {
 	for i := range l {
 		if l[i] == s {
