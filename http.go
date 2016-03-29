@@ -105,6 +105,20 @@ func HTTPDelete(url string) (statusCode int, statusText string, err error) {
 	return response.StatusCode, response.Status, nil
 }
 
+// HTTPPostForm performs a HTTP POST request with data as application/x-www-form-urlencoded
+func HTTPPostForm(url string, data url.Values) (statusCode int, statusText string, err error) {
+	request, err := http.NewRequest("POST", url, strings.NewReader(data.Encode()))
+	if err != nil {
+		return 0, "", err
+	}
+	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return 0, "", err
+	}
+	return response.StatusCode, response.Status, nil
+}
+
 // HTTPPutForm performs a HTTP PUT request with data as application/x-www-form-urlencoded
 func HTTPPutForm(url string, data url.Values) (statusCode int, statusText string, err error) {
 	request, err := http.NewRequest("PUT", url, strings.NewReader(data.Encode()))
