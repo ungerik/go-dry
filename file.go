@@ -43,6 +43,9 @@ func FileGetBytes(filenameOrURL string, timeout ...time.Duration) ([]byte, error
 				return nil, err
 			}
 			defer r.Body.Close()
+			if r.StatusCode < 200 || r.StatusCode > 299 {
+				return nil, fmt.Errorf("%d: %s", r.StatusCode, http.StatusText(r.StatusCode))
+			}
 			return ioutil.ReadAll(r.Body)
 		}
 	}
