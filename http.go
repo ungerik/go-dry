@@ -65,12 +65,12 @@ func (h *HTTPCompressHandler) ServeHTTP(response http.ResponseWriter, request *h
 // If the response status code is not 200 OK,
 // then the status is returned as an error.
 func HTTPPostJSON(url string, data interface{}) error {
-	b, err := json.Marshal(data)
+	b, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return err
 	}
 	response, err := http.Post(url, "application/json", bytes.NewBuffer(b))
-	if err == nil && response.StatusCode != 200 {
+	if err == nil && (response.StatusCode < 200 || response.StatusCode > 299) {
 		err = errors.New(response.Status)
 	}
 	return err
@@ -81,12 +81,12 @@ func HTTPPostJSON(url string, data interface{}) error {
 // If the response status code is not 200 OK,
 // then the status is returned as an error.
 func HTTPPostXML(url string, data interface{}) error {
-	b, err := xml.Marshal(data)
+	b, err := xml.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return err
 	}
 	response, err := http.Post(url, "application/xml", bytes.NewBuffer(b))
-	if err == nil && response.StatusCode != 200 {
+	if err == nil && (response.StatusCode < 200 || response.StatusCode > 299) {
 		err = errors.New(response.Status)
 	}
 	return err
