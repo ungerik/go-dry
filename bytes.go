@@ -22,9 +22,9 @@ func BytesReader(data interface{}) io.Reader {
 	case string:
 		return strings.NewReader(s)
 	case fmt.Stringer:
-		strings.NewReader(s.String())
+		return strings.NewReader(s.String())
 	case error:
-		strings.NewReader(s.Error())
+		return strings.NewReader(s.Error())
 	}
 	return nil
 }
