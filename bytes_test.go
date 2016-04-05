@@ -1,6 +1,7 @@
 package dry
 
 import (
+	"bytes"
 	"io"
 	"strings"
 	"testing"
@@ -54,6 +55,30 @@ func Test_BytesReader(t *testing.T) {
 
 	myErr := MyError{"hello"}
 	testBytesReaderFn(myErr)
+}
+
+func testCompressDecompress(t *testing.T,
+	compressFunc func([]byte) []byte,
+	decompressFunc func([]byte) []byte) {
+	testFn := func(testData []byte) {
+		compressedData := compressFunc(testData)
+		uncompressedData := decompressFunc(compressedData)
+		if !bytes.Equal(testData, uncompressedData) {
+			t.FailNow()
+		}
+	}
+
+	go testFn([]byte("hello123"))
+	go testFn([]byte("gopher456"))
+	go testFn([]byte("dry789"))
+}
+
+func Test_BytesDeflateInflate(t *testing.T) {
+	testCompressDecompress(t, BytesDeflate, BytesInflate)
+}
+
+func Test_BytesGzipUnGzip(t *testing.T) {
+	testCompressDecompress(t, BytesGzip, BytesUnGzip)
 }
 
 func Test_BytesMap(t *testing.T) {
