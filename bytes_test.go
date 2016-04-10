@@ -3,6 +3,7 @@ package dry
 import (
 	"bytes"
 	"io"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -79,6 +80,42 @@ func Test_BytesDeflateInflate(t *testing.T) {
 
 func Test_BytesGzipUnGzip(t *testing.T) {
 	testCompressDecompress(t, BytesGzip, BytesUnGzip)
+}
+
+func bytesHeadTailTestHelper(
+	t *testing.T,
+	testMethod func([]byte, int) ([]string, []byte),
+	lines []byte, n int,
+	expected_lines []string, expected_rest []byte) {
+	result_lines, result_rest := testMethod(lines, n)
+	if !reflect.DeepEqual(result_lines, expected_lines) {
+		t.FailNow()
+	}
+	if !bytes.Equal(result_rest, expected_rest) {
+		t.FailNow()
+	}
+}
+
+func Test_BytesHead(t *testing.T) {
+	bytesHeadTailTestHelper(
+		t, BytesHead,
+		[]byte("line1\nline2\r\nline3\nline4\nline5"), 3,
+		[]string{"line1", "line2", "line3"}, []byte("line4\nline5"))
+	bytesHeadTailTestHelper(
+		t, BytesHead,
+		[]byte("line1\nline2\r\nline3\nline4\nline5"), 6,
+		[]string{"line1", "line2", "line3", "line4", "line5"}, []byte(""))
+}
+
+func Test_BytesTail(t *testing.T) {
+	bytesHeadTailTestHelper(
+		t, BytesTail,
+		[]byte("line1\nline2\nline3\nline4\r\nline5"), 2,
+		[]string{"line5", "line4"}, []byte("line1\nline2\nline3"))
+	bytesHeadTailTestHelper(
+		t, BytesTail,
+		[]byte("line1\nline2\r\nline3\nline4\nline5"), 6,
+		[]string{"line5", "line4", "line3", "line2", "line1"}, []byte(""))
 }
 
 func Test_BytesMap(t *testing.T) {

@@ -107,6 +107,10 @@ func BytesHead(data []byte, numLines int) (lines []string, rest []byte) {
 			}
 		}
 	}
+	if len(lines) != numLines {
+		lines = append(lines, string(data[begin:]))
+		begin = len(data)
+	}
 	return lines, data[begin:]
 }
 
@@ -119,21 +123,25 @@ func BytesTail(data []byte, numLines int) (lines []string, rest []byte) {
 		panic("numLines must be greater than zero")
 	}
 	lines = make([]string, 0, numLines)
-	begin := 0
+	end := len(data)
 	for i := len(data) - 1; i >= 0; i-- {
 		if data[i] == '\n' {
-			end := i
-			if i > 0 && data[i-1] == '\r' {
+			begin := i
+			if end < len(data) && data[end-1] == '\r' {
 				end--
 			}
-			lines = append(lines, string(data[begin:end]))
-			begin = i + 1
+			lines = append(lines, string(data[begin+1:end]))
+			end = begin
 			if len(lines) == numLines {
 				break
 			}
 		}
 	}
-	return lines, data[:begin]
+	if len(lines) != numLines {
+		lines = append(lines, string(data[:end]))
+		end = 0
+	}
+	return lines, data[:end]
 }
 
 // Map a function on each element of a slice of bytes.
