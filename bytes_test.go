@@ -57,6 +57,42 @@ func Test_BytesReader(t *testing.T) {
 	testBytesReaderFn(myErr)
 }
 
+func assertStringsEqual(t *testing.T, str1, str2 string) {
+	if str1 != str2 {
+		t.FailNow()
+	}
+}
+
+func Test_BytesMD5(t *testing.T) {
+	assertStringsEqual(
+		t, "5d41402abc4b2a76b9719d911017c592",
+		BytesMD5("hello"))
+}
+
+func Test_BytesEncodeBase64(t *testing.T) {
+	assertStringsEqual(
+		t, "aGVsbG8=",
+		BytesEncodeBase64("hello"))
+}
+
+func Test_BytesDecodeBase64(t *testing.T) {
+	assertStringsEqual(
+		t, "hello",
+		BytesDecodeBase64("aGVsbG8="))
+}
+
+func Test_BytesEncodeHex(t *testing.T) {
+	assertStringsEqual(
+		t, "68656c6c6f",
+		BytesEncodeHex("hello"))
+}
+
+func Test_BytesDecodeHex(t *testing.T) {
+	assertStringsEqual(
+		t, "hello",
+		BytesDecodeHex("68656C6C6F"))
+}
+
 func testCompressDecompress(t *testing.T,
 	compressFunc func([]byte) []byte,
 	decompressFunc func([]byte) []byte) {
