@@ -12,22 +12,27 @@ func RandSeedWithTime() {
 	mathRand.Seed(time.Now().UTC().UnixNano())
 }
 
-// RandomHexString returns a random lower case hex string with length.
-func RandomHexString(length int) string {
-	buffer := make([]byte, length/2)
+func getRandomHexString(length int, formatStr string) string {
+	var buffer []byte
+	if length%2 == 0 {
+		buffer = make([]byte, length/2)
+	} else {
+		buffer = make([]byte, (length+1)/2)
+	}
 	_, err := cryptoRand.Read(buffer)
 	if err != nil {
 		return ""
 	}
-	return fmt.Sprintf("%x", buffer)
+	hex_string := fmt.Sprintf(formatStr, buffer)
+	return hex_string[:length]
+}
+
+// RandomHexString returns a random lower case hex string with length.
+func RandomHexString(length int) string {
+	return getRandomHexString(length, "%x")
 }
 
 // RandomHEXString returns a random upper case hex string with length.
 func RandomHEXString(length int) string {
-	buffer := make([]byte, length/2)
-	_, err := cryptoRand.Read(buffer)
-	if err != nil {
-		return ""
-	}
-	return fmt.Sprintf("%X", buffer)
+	return getRandomHexString(length, "%X")
 }
