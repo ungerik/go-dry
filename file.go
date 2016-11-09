@@ -15,7 +15,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	"path"
+	"path/filepath"
 	// "strconv"
 	"strings"
 	"time"
@@ -359,7 +359,7 @@ func FileIsDir(dirname string) bool {
 func FileFind(searchDirs []string, filenames ...string) (filePath string, found bool) {
 	for _, dir := range searchDirs {
 		for _, filename := range filenames {
-			filePath = path.Join(dir, filename)
+			filePath = filepath.Join(dir, filename)
 			if FileExists(filePath) {
 				return filePath, true
 			}
@@ -371,7 +371,7 @@ func FileFind(searchDirs []string, filenames ...string) (filePath string, found 
 func FileFindModified(searchDirs []string, filenames ...string) (filePath string, found bool, modified time.Time) {
 	for _, dir := range searchDirs {
 		for _, filename := range filenames {
-			filePath = path.Join(dir, filename)
+			filePath = filepath.Join(dir, filename)
 			if t := FileTimeModified(filePath); !t.IsZero() {
 				return filePath, true, t
 			}
@@ -617,8 +617,8 @@ func FileCopyDir(source string, dest string) (err error) {
 	}
 	entries, err := ioutil.ReadDir(source)
 	for _, entry := range entries {
-		sourcePath := path.Join(source, entry.Name())
-		destinationPath := path.Join(dest, entry.Name())
+		sourcePath := filepath.Join(source, entry.Name())
+		destinationPath := filepath.Join(dest, entry.Name())
 		if entry.IsDir() {
 			err = FileCopyDir(sourcePath, destinationPath)
 		} else {
