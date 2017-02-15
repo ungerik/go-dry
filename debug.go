@@ -2,11 +2,34 @@ package dry
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"runtime"
+	"strings"
 	"sync"
 )
+
+// PrettyPrintAsJSON marshalles input as indented JSON
+// and calles fmt.Println with the result.
+// If indent arguments are given, they are joined into
+// a string and used as JSON line indent.
+// If no indet argument is given, two spaces will be used
+// to indent JSON lines.
+func PrettyPrintAsJSON(input interface{}, indent ...string) error {
+	var indentStr string
+	if len(indent) == 0 {
+		indentStr = "  "
+	} else {
+		indentStr = strings.Join(indent, "")
+	}
+	data, err := json.MarshalIndent(input, "", indentStr)
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Println(string(data))
+	return err
+}
 
 // Nop is a dummy function that can be called in source files where
 // other debug functions are constantly added and removed.
