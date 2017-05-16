@@ -88,6 +88,7 @@ var (
 	dunno     = []byte("???")
 	centerDot = []byte("·")
 	dot       = []byte(".")
+	sep       = []byte("/")
 )
 
 // source returns a space-trimmed slice of the n'th line.
@@ -111,6 +112,11 @@ func function(pc uintptr) []byte {
 	//	runtime/debug.*T·ptrmethod
 	// and want
 	//	*T.ptrmethod
+
+	if period := bytes.LastIndex(name, sep); period >= 0 {
+		name = name[period+1:]
+	}
+
 	if period := bytes.Index(name, dot); period >= 0 {
 		name = name[period+1:]
 	}
