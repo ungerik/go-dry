@@ -11,56 +11,56 @@ type StringBuilder struct {
 	buffer bytes.Buffer
 }
 
-func (self *StringBuilder) Write(strings ...string) *StringBuilder {
+func (s *StringBuilder) Write(strings ...string) *StringBuilder {
 	for _, str := range strings {
-		self.buffer.WriteString(str)
+		s.buffer.WriteString(str)
 	}
-	return self
+	return s
 }
 
-func (self *StringBuilder) Printf(format string, args ...interface{}) *StringBuilder {
-	fmt.Fprintf(&self.buffer, format, args...)
-	return self
+func (s *StringBuilder) Printf(format string, args ...interface{}) *StringBuilder {
+	fmt.Fprintf(&s.buffer, format, args...)
+	return s
 }
 
-func (self *StringBuilder) Byte(value byte) *StringBuilder {
-	self.buffer.WriteByte(value)
-	return self
+func (s *StringBuilder) Byte(value byte) *StringBuilder {
+	s.buffer.WriteByte(value)
+	return s
 }
 
-func (self *StringBuilder) WriteBytes(bytes []byte) *StringBuilder {
-	self.buffer.Write(bytes)
-	return self
+func (s *StringBuilder) WriteBytes(bytes []byte) *StringBuilder {
+	s.buffer.Write(bytes)
+	return s
 }
 
-func (self *StringBuilder) Int(value int) *StringBuilder {
-	self.buffer.WriteString(strconv.Itoa(value))
-	return self
+func (s *StringBuilder) Int(value int) *StringBuilder {
+	s.buffer.WriteString(strconv.Itoa(value))
+	return s
 }
 
-func (self *StringBuilder) Uint(value uint) *StringBuilder {
-	self.buffer.WriteString(strconv.FormatUint(uint64(value), 10))
-	return self
+func (s *StringBuilder) Uint(value uint) *StringBuilder {
+	s.buffer.WriteString(strconv.FormatUint(uint64(value), 10))
+	return s
 }
 
-func (self *StringBuilder) Float(value float64) *StringBuilder {
-	self.buffer.WriteString(strconv.FormatFloat(value, 'f', -1, 64))
-	return self
+func (s *StringBuilder) Float(value float64) *StringBuilder {
+	s.buffer.WriteString(strconv.FormatFloat(value, 'f', -1, 64))
+	return s
 }
 
-func (self *StringBuilder) Bool(value bool) *StringBuilder {
-	self.buffer.WriteString(strconv.FormatBool(value))
-	return self
+func (s *StringBuilder) Bool(value bool) *StringBuilder {
+	s.buffer.WriteString(strconv.FormatBool(value))
+	return s
 }
 
-func (self *StringBuilder) WriteTo(writer io.Writer) (n int64, err error) {
-	return self.buffer.WriteTo(writer)
+func (s *StringBuilder) WriteTo(writer io.Writer) (n int64, err error) {
+	return s.buffer.WriteTo(writer)
 }
 
-func (self *StringBuilder) Bytes() []byte {
-	return self.buffer.Bytes()
+func (s *StringBuilder) Bytes() []byte {
+	return s.buffer.Bytes()
 }
 
-func (self *StringBuilder) String() string {
-	return self.buffer.String()
+func (s *StringBuilder) String() string {
+	return s.buffer.String()
 }

@@ -18,7 +18,6 @@ func EndianSafeSplitUint16(value uint16) (leastSignificant, mostSignificant uint
 	bytes := (*[2]uint8)(unsafe.Pointer(&value))
 	if EndianIsLittle() {
 		return bytes[0], bytes[1]
-	} else {
-		return bytes[1], bytes[0]
 	}
+	return bytes[1], bytes[0]
 }

@@ -33,7 +33,7 @@ func Test_BytesReader(t *testing.T) {
 		if n != 5 {
 			t.FailNow()
 		}
-		for i, _ := range result {
+		for i := range result {
 			if result[i] != expected[i] {
 				t.FailNow()
 			}
@@ -122,12 +122,12 @@ func bytesHeadTailTestHelper(
 	t *testing.T,
 	testMethod func([]byte, int) ([]string, []byte),
 	lines []byte, n int,
-	expected_lines []string, expected_rest []byte) {
-	result_lines, result_rest := testMethod(lines, n)
-	if !reflect.DeepEqual(result_lines, expected_lines) {
+	expectedLines []string, expectedRest []byte) {
+	resultLines, resultRest := testMethod(lines, n)
+	if !reflect.DeepEqual(resultLines, expectedLines) {
 		t.FailNow()
 	}
-	if !bytes.Equal(result_rest, expected_rest) {
+	if !bytes.Equal(resultRest, expectedRest) {
 		t.FailNow()
 	}
 }
@@ -163,7 +163,7 @@ func Test_BytesMap(t *testing.T) {
 	if len(result) != len(correct) {
 		t.Fail()
 	}
-	for i, _ := range result {
+	for i := range result {
 		if result[i] != correct[i] {
 			t.Fail()
 		}
@@ -179,7 +179,7 @@ func Test_BytesFilter(t *testing.T) {
 	if len(result) != len(correct) {
 		t.Fail()
 	}
-	for i, _ := range result {
+	for i := range result {
 		if result[i] != correct[i] {
 			t.Fail()
 		}

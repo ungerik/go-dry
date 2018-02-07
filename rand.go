@@ -23,8 +23,8 @@ func getRandomHexString(length int, formatStr string) string {
 	if err != nil {
 		return ""
 	}
-	hex_string := fmt.Sprintf(formatStr, buffer)
-	return hex_string[:length]
+	hexString := fmt.Sprintf(formatStr, buffer)
+	return hexString[:length]
 }
 
 // RandomHexString returns a random lower case hex string with length.

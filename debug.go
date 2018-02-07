@@ -129,14 +129,14 @@ type DebugMutex struct {
 	m sync.Mutex
 }
 
-func (self *DebugMutex) Lock() {
+func (d *DebugMutex) Lock() {
 	fmt.Println("Mutex.Lock()\n" + StackTraceLine(3))
-	self.m.Lock()
+	d.m.Lock()
 }
 
-func (self *DebugMutex) Unlock() {
+func (d *DebugMutex) Unlock() {
 	fmt.Println("Mutex.Unlock()\n" + StackTraceLine(3))
-	self.m.Unlock()
+	d.m.Unlock()
 }
 
 // DebugRWMutex wraps a sync.RWMutex and adds debug output
@@ -144,26 +144,26 @@ type DebugRWMutex struct {
 	m sync.RWMutex
 }
 
-func (self *DebugRWMutex) RLock() {
+func (d *DebugRWMutex) RLock() {
 	fmt.Println("RWMutex.RLock()\n" + StackTraceLine(3))
-	self.m.RLock()
+	d.m.RLock()
 }
 
-func (self *DebugRWMutex) RUnlock() {
+func (d *DebugRWMutex) RUnlock() {
 	fmt.Println("RWMutex.RUnlock()\n" + StackTraceLine(3))
-	self.m.RUnlock()
+	d.m.RUnlock()
 }
 
-func (self *DebugRWMutex) Lock() {
+func (d *DebugRWMutex) Lock() {
 	fmt.Println("RWMutex.Lock()\n" + StackTraceLine(3))
-	self.m.Lock()
+	d.m.Lock()
 }
 
-func (self *DebugRWMutex) Unlock() {
+func (d *DebugRWMutex) Unlock() {
 	fmt.Println("RWMutex.Unlock()\n" + StackTraceLine(3))
-	self.m.Unlock()
+	d.m.Unlock()
 }
 
-func (self *DebugRWMutex) RLocker() sync.Locker {
-	return self.m.RLocker()
+func (d *DebugRWMutex) RLocker() sync.Locker {
+	return d.m.RLocker()
 }

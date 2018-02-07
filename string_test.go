@@ -11,7 +11,7 @@ func Test_StringMap(t *testing.T) {
 	if len(result) != len(correct) {
 		t.Fail()
 	}
-	for i, _ := range result {
+	for i := range result {
 		if result[i] != correct[i] {
 			t.Fail()
 		}
@@ -27,14 +27,14 @@ func Test_StringFilter(t *testing.T) {
 	if len(result) != len(correct) {
 		t.Fail()
 	}
-	for i, _ := range result {
+	for i := range result {
 		if result[i] != correct[i] {
 			t.Fail()
 		}
 	}
 }
 
-func Text_StringFindBetween(t *testing.T) {
+func Test_StringFindBetween(t *testing.T) {
 	s := "Hello <em>World</em>!"
 
 	between, remainder, found := StringFindBetween(s, "<em>", "</em>")

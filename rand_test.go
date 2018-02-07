@@ -9,11 +9,11 @@ func randomHexStringTestHelper(
 	testMethod func(int) string,
 	upperCase bool) {
 	testFn := func(n int) string {
-		random_bytes := testMethod(n)
-		if len(random_bytes) != n {
+		randomBytes := testMethod(n)
+		if len(randomBytes) != n {
 			t.FailNow()
 		}
-		for i := range []byte(random_bytes) {
+		for i := range []byte(randomBytes) {
 			if i > 9 {
 				if upperCase {
 					if !(i >= 'A' && i <= 'Z') {
@@ -26,12 +26,12 @@ func randomHexStringTestHelper(
 				}
 			}
 		}
-		return random_bytes
+		return randomBytes
 	}
-	random_bytes1 := testFn(3)
+	randomBytes1 := testFn(3)
 	testFn(10)
-	random_bytes2 := testFn(3)
-	if random_bytes1 == random_bytes2 {
+	randomBytes2 := testFn(3)
+	if randomBytes1 == randomBytes2 {
 		t.FailNow()
 	}
 }

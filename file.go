@@ -632,7 +632,7 @@ func FileCopyDir(source string, dest string) (err error) {
 	return err
 }
 
-// A struct for returning file copy error messages
+// FileCopyError is a struct for returning file copy error messages
 type FileCopyError struct {
 	What string
 }

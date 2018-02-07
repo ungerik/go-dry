@@ -65,7 +65,7 @@ func ReflectSetStructFieldsFromStringMap(structPtr interface{}, m map[string]str
 }
 
 /*
-ExportedStructFields returns a map from exported struct field names to values,
+ReflectExportedStructFields returns a map from exported struct field names to values,
 inlining anonymous sub-structs so that their field names are available
 at the base level.
 Example:
@@ -175,19 +175,19 @@ type reflectSortable struct {
 	PtrArgs     bool
 }
 
-func (self *reflectSortable) Len() int {
-	return self.Slice.Len()
+func (r *reflectSortable) Len() int {
+	return r.Slice.Len()
 }
 
-func (self *reflectSortable) Less(i, j int) bool {
-	arg0 := self.Slice.Index(i)
-	arg1 := self.Slice.Index(j)
-	if self.Slice.Type().Elem().Kind() == reflect.Interface {
+func (r *reflectSortable) Less(i, j int) bool {
+	arg0 := r.Slice.Index(i)
+	arg1 := r.Slice.Index(j)
+	if r.Slice.Type().Elem().Kind() == reflect.Interface {
 		arg0 = arg0.Elem()
 		arg1 = arg1.Elem()
 	}
-	if (arg0.Kind() == reflect.Ptr) != self.PtrArgs {
-		if self.PtrArgs {
+	if (arg0.Kind() == reflect.Ptr) != r.PtrArgs {
+		if r.PtrArgs {
 			// Expects PtrArgs for reflectSortable, but Slice is value type
 			arg0 = arg0.Addr()
 		} else {
@@ -195,8 +195,8 @@ func (self *reflectSortable) Less(i, j int) bool {
 			arg0 = arg0.Elem()
 		}
 	}
-	if (arg1.Kind() == reflect.Ptr) != self.PtrArgs {
-		if self.PtrArgs {
+	if (arg1.Kind() == reflect.Ptr) != r.PtrArgs {
+		if r.PtrArgs {
 			// Expects PtrArgs for reflectSortable, but Slice is value type
 			arg1 = arg1.Addr()
 		} else {
@@ -204,13 +204,13 @@ func (self *reflectSortable) Less(i, j int) bool {
 			arg1 = arg1.Elem()
 		}
 	}
-	return self.CompareFunc.Call([]reflect.Value{arg0, arg1})[0].Bool()
+	return r.CompareFunc.Call([]reflect.Value{arg0, arg1})[0].Bool()
 }
 
-func (self *reflectSortable) Swap(i, j int) {
-	temp := self.Slice.Index(i).Interface()
-	self.Slice.Index(i).Set(self.Slice.Index(j))
-	self.Slice.Index(j).Set(reflect.ValueOf(temp))
+func (r *reflectSortable) Swap(i, j int) {
+	temp := r.Slice.Index(i).Interface()
+	r.Slice.Index(i).Set(r.Slice.Index(j))
+	r.Slice.Index(j).Set(reflect.ValueOf(temp))
 }
 
 // InterfaceSlice converts a slice of any type into a slice of interface{}.

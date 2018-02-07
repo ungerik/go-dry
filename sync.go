@@ -16,30 +16,30 @@ func NewSyncBool(value bool) *SyncBool {
 	return &SyncBool{value: value}
 }
 
-func (self *SyncBool) Get() bool {
-	self.mutex.RLock()
-	defer self.mutex.RUnlock()
-	return self.value
+func (s *SyncBool) Get() bool {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	return s.value
 }
 
-func (self *SyncBool) Set(value bool) {
-	self.mutex.Lock()
-	self.value = value
-	self.mutex.Unlock()
+func (s *SyncBool) Set(value bool) {
+	s.mutex.Lock()
+	s.value = value
+	s.mutex.Unlock()
 }
 
-func (self *SyncBool) Invert() bool {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-	self.value = !self.value
-	return self.value
+func (s *SyncBool) Invert() bool {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.value = !s.value
+	return s.value
 }
 
-func (self *SyncBool) Swap(value bool) bool {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-	result := self.value
-	self.value = value
+func (s *SyncBool) Swap(value bool) bool {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	result := s.value
+	s.value = value
 	return result
 }
 
@@ -55,37 +55,37 @@ func NewSyncInt(value int) *SyncInt {
 	return &SyncInt{value: value}
 }
 
-func (self *SyncInt) Get() int {
-	self.mutex.RLock()
-	defer self.mutex.RUnlock()
-	return self.value
+func (s *SyncInt) Get() int {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	return s.value
 }
 
-func (self *SyncInt) Set(value int) {
-	self.mutex.Lock()
-	self.value = value
-	self.mutex.Unlock()
+func (s *SyncInt) Set(value int) {
+	s.mutex.Lock()
+	s.value = value
+	s.mutex.Unlock()
 }
 
-func (self *SyncInt) Add(value int) int {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-	self.value += value
-	return self.value
+func (s *SyncInt) Add(value int) int {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.value += value
+	return s.value
 }
 
-func (self *SyncInt) Mul(value int) int {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-	self.value *= value
-	return self.value
+func (s *SyncInt) Mul(value int) int {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.value *= value
+	return s.value
 }
 
-func (self *SyncInt) Swap(value int) int {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-	result := self.value
-	self.value = value
+func (s *SyncInt) Swap(value int) int {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	result := s.value
+	s.value = value
 	return result
 }
 
@@ -101,30 +101,30 @@ func NewSyncString(value string) *SyncString {
 	return &SyncString{value: value}
 }
 
-func (self *SyncString) Get() string {
-	self.mutex.RLock()
-	defer self.mutex.RUnlock()
-	return self.value
+func (s *SyncString) Get() string {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	return s.value
 }
 
-func (self *SyncString) Set(value string) {
-	self.mutex.Lock()
-	self.value = value
-	self.mutex.Unlock()
+func (s *SyncString) Set(value string) {
+	s.mutex.Lock()
+	s.value = value
+	s.mutex.Unlock()
 }
 
-func (self *SyncString) Append(value string) string {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-	self.value += value
-	return self.value
+func (s *SyncString) Append(value string) string {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.value += value
+	return s.value
 }
 
-func (self *SyncString) Swap(value string) string {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-	result := self.value
-	self.value = value
+func (s *SyncString) Swap(value string) string {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	result := s.value
+	s.value = value
 	return result
 }
 
@@ -140,37 +140,37 @@ func NewSyncFloat(value float64) *SyncFloat {
 	return &SyncFloat{value: value}
 }
 
-func (self *SyncFloat) Get() float64 {
-	self.mutex.RLock()
-	defer self.mutex.RUnlock()
-	return self.value
+func (s *SyncFloat) Get() float64 {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	return s.value
 }
 
-func (self *SyncFloat) Set(value float64) {
-	self.mutex.Lock()
-	self.value = value
-	self.mutex.Unlock()
+func (s *SyncFloat) Set(value float64) {
+	s.mutex.Lock()
+	s.value = value
+	s.mutex.Unlock()
 }
 
-func (self *SyncFloat) Add(value float64) float64 {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-	self.value += value
-	return self.value
+func (s *SyncFloat) Add(value float64) float64 {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.value += value
+	return s.value
 }
 
-func (self *SyncFloat) Mul(value float64) float64 {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-	self.value *= value
-	return self.value
+func (s *SyncFloat) Mul(value float64) float64 {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	s.value *= value
+	return s.value
 }
 
-func (self *SyncFloat) Swap(value float64) float64 {
-	self.mutex.Lock()
-	defer self.mutex.Unlock()
-	result := self.value
-	self.value = value
+func (s *SyncFloat) Swap(value float64) float64 {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+	result := s.value
+	s.value = value
 	return result
 }
 
@@ -186,61 +186,61 @@ func NewSyncMap() *SyncMap {
 	return &SyncMap{m: make(map[string]interface{})}
 }
 
-func (self *SyncMap) Has(key string) bool {
-	self.mutex.RLock()
-	_, ok := self.m[key]
-	self.mutex.RUnlock()
+func (s *SyncMap) Has(key string) bool {
+	s.mutex.RLock()
+	_, ok := s.m[key]
+	s.mutex.RUnlock()
 	return ok
 }
 
-func (self *SyncMap) Get(key string) interface{} {
-	self.mutex.RLock()
-	defer self.mutex.RUnlock()
-	return self.m[key]
+func (s *SyncMap) Get(key string) interface{} {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	return s.m[key]
 }
 
-func (self *SyncMap) Add(key string, value interface{}) {
-	self.mutex.Lock()
-	self.m[key] = value
-	self.mutex.Unlock()
+func (s *SyncMap) Add(key string, value interface{}) {
+	s.mutex.Lock()
+	s.m[key] = value
+	s.mutex.Unlock()
 }
 
-func (self *SyncMap) Delete(key string) {
-	self.mutex.Lock()
-	delete(self.m, key)
-	self.mutex.Unlock()
+func (s *SyncMap) Delete(key string) {
+	s.mutex.Lock()
+	delete(s.m, key)
+	s.mutex.Unlock()
 }
 
-func (self *SyncMap) Int(key string) *SyncInt {
-	return self.Get(key).(*SyncInt)
+func (s *SyncMap) Int(key string) *SyncInt {
+	return s.Get(key).(*SyncInt)
 }
 
-func (self *SyncMap) AddInt(key string, value int) {
-	self.Add(key, NewSyncInt(value))
+func (s *SyncMap) AddInt(key string, value int) {
+	s.Add(key, NewSyncInt(value))
 }
 
-func (self *SyncMap) Float(key string) *SyncFloat {
-	return self.Get(key).(*SyncFloat)
+func (s *SyncMap) Float(key string) *SyncFloat {
+	return s.Get(key).(*SyncFloat)
 }
 
-func (self *SyncMap) AddFloat(key string, value float64) {
-	self.Add(key, NewSyncFloat(value))
+func (s *SyncMap) AddFloat(key string, value float64) {
+	s.Add(key, NewSyncFloat(value))
 }
 
-func (self *SyncMap) Bool(key string) *SyncBool {
-	return self.Get(key).(*SyncBool)
+func (s *SyncMap) Bool(key string) *SyncBool {
+	return s.Get(key).(*SyncBool)
 }
 
-func (self *SyncMap) AddBool(key string, value bool) {
-	self.Add(key, NewSyncBool(value))
+func (s *SyncMap) AddBool(key string, value bool) {
+	s.Add(key, NewSyncBool(value))
 }
 
-func (self *SyncMap) String(key string) *SyncString {
-	return self.Get(key).(*SyncString)
+func (s *SyncMap) String(key string) *SyncString {
+	return s.Get(key).(*SyncString)
 }
 
-func (self *SyncMap) AddString(key string, value string) {
-	self.Add(key, NewSyncString(value))
+func (s *SyncMap) AddString(key string, value string) {
+	s.Add(key, NewSyncString(value))
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -255,29 +255,29 @@ func NewSyncStringMap() *SyncStringMap {
 	return &SyncStringMap{m: make(map[string]string)}
 }
 
-func (self *SyncStringMap) Has(key string) bool {
-	self.mutex.RLock()
-	_, ok := self.m[key]
-	self.mutex.RUnlock()
+func (s *SyncStringMap) Has(key string) bool {
+	s.mutex.RLock()
+	_, ok := s.m[key]
+	s.mutex.RUnlock()
 	return ok
 }
 
-func (self *SyncStringMap) Get(key string) string {
-	self.mutex.RLock()
-	defer self.mutex.RUnlock()
-	return self.m[key]
+func (s *SyncStringMap) Get(key string) string {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	return s.m[key]
 }
 
-func (self *SyncStringMap) Add(key string, value string) {
-	self.mutex.Lock()
-	self.m[key] = value
-	self.mutex.Unlock()
+func (s *SyncStringMap) Add(key string, value string) {
+	s.mutex.Lock()
+	s.m[key] = value
+	s.mutex.Unlock()
 }
 
-func (self *SyncStringMap) Delete(key string) {
-	self.mutex.Lock()
-	delete(self.m, key)
-	self.mutex.Unlock()
+func (s *SyncStringMap) Delete(key string) {
+	s.mutex.Lock()
+	delete(s.m, key)
+	s.mutex.Unlock()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -292,38 +292,38 @@ func NewSyncPoolMap() *SyncPoolMap {
 	return &SyncPoolMap{m: make(map[string]*sync.Pool)}
 }
 
-func (self *SyncPoolMap) Has(key string) bool {
-	self.mutex.RLock()
-	_, ok := self.m[key]
-	self.mutex.RUnlock()
+func (s *SyncPoolMap) Has(key string) bool {
+	s.mutex.RLock()
+	_, ok := s.m[key]
+	s.mutex.RUnlock()
 	return ok
 }
 
-func (self *SyncPoolMap) Get(key string) *sync.Pool {
-	self.mutex.RLock()
-	defer self.mutex.RUnlock()
-	return self.m[key]
+func (s *SyncPoolMap) Get(key string) *sync.Pool {
+	s.mutex.RLock()
+	defer s.mutex.RUnlock()
+	return s.m[key]
 }
 
-func (self *SyncPoolMap) Add(key string, value *sync.Pool) {
-	self.mutex.Lock()
-	self.m[key] = value
-	self.mutex.Unlock()
+func (s *SyncPoolMap) Add(key string, value *sync.Pool) {
+	s.mutex.Lock()
+	s.m[key] = value
+	s.mutex.Unlock()
 }
 
-func (self *SyncPoolMap) GetOrAddNew(key string, newFunc func() interface{}) *sync.Pool {
-	self.mutex.Lock()
-	pool := self.m[key]
+func (s *SyncPoolMap) GetOrAddNew(key string, newFunc func() interface{}) *sync.Pool {
+	s.mutex.Lock()
+	pool := s.m[key]
 	if pool == nil {
 		pool = &sync.Pool{New: newFunc}
-		self.m[key] = pool
+		s.m[key] = pool
 	}
-	self.mutex.Unlock()
+	s.mutex.Unlock()
 	return pool
 }
 
-func (self *SyncPoolMap) Delete(key string) {
-	self.mutex.Lock()
-	delete(self.m, key)
-	self.mutex.Unlock()
+func (s *SyncPoolMap) Delete(key string) {
+	s.mutex.Lock()
+	delete(s.m, key)
+	s.mutex.Unlock()
 }
