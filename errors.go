@@ -1,8 +1,8 @@
 package dry
 
 import (
-	"bytes"
 	"fmt"
+	"strings"
 )
 
 // PanicIfErr panics with a stack trace if any
@@ -112,11 +112,11 @@ func (list ErrorList) Error() string {
 	if len(list) == 0 {
 		return "Empty ErrorList"
 	}
-	var buf bytes.Buffer
+	var b strings.Builder
 	for _, err := range list {
-		fmt.Fprintln(&buf, err)
+		fmt.Fprintln(&b, err)
 	}
-	return buf.String()
+	return b.String()
 }
 
 // Err returns the list if it is not empty,

@@ -43,25 +43,25 @@ func Nop(dummiesIn ...interface{}) (dummyOut interface{}) {
 }
 
 func StackTrace(skipFrames int) string {
-	buf := new(bytes.Buffer) // the returned data
+	var b strings.Builder
 	var lastFile string
 	for i := 3; ; i++ {
-		contin := fprintStackTraceLine(i, &lastFile, buf)
+		contin := fprintStackTraceLine(i, &lastFile, &b)
 		if !contin {
 			break
 		}
 	}
-	return buf.String()
+	return b.String()
 }
 
 func StackTraceLine(skipFrames int) string {
-	var buf bytes.Buffer
+	var b strings.Builder
 	var lastFile string
-	fprintStackTraceLine(skipFrames, &lastFile, &buf)
-	return buf.String()
+	fprintStackTraceLine(skipFrames, &lastFile, &b)
+	return b.String()
 }
 
-func fprintStackTraceLine(i int, lastFile *string, buf *bytes.Buffer) bool {
+func fprintStackTraceLine(i int, lastFile *string, b *strings.Builder) bool {
 	var lines [][]byte
 
 	pc, file, line, ok := runtime.Caller(i)
@@ -70,7 +70,7 @@ func fprintStackTraceLine(i int, lastFile *string, buf *bytes.Buffer) bool {
 	}
 
 	// Print this much at least.  If we can't find the source, it won't show.
-	fmt.Fprintf(buf, "%s:%d (0x%x)\n", file, line, pc)
+	fmt.Fprintf(b, "%s:%d (0x%x)\n", file, line, pc)
 	if file != *lastFile {
 		data, err := ioutil.ReadFile(file)
 		if err != nil {
@@ -80,7 +80,7 @@ func fprintStackTraceLine(i int, lastFile *string, buf *bytes.Buffer) bool {
 		*lastFile = file
 	}
 	line-- // in stack trace, lines are 1-indexed but our array is 0-indexed
-	fmt.Fprintf(buf, "\t%s: %s\n", function(pc), source(lines, line))
+	fmt.Fprintf(b, "\t%s: %s\n", function(pc), source(lines, line))
 	return true
 }
 

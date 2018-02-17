@@ -145,13 +145,13 @@ func StringConvertTime(timeString, formatIn, formatOut string) (resultTime strin
 }
 
 func StringCSV(records [][]string) string {
-	var buf bytes.Buffer
-	writer := csv.NewWriter(&buf)
+	var b strings.Builder
+	writer := csv.NewWriter(&b)
 	err := writer.WriteAll(records)
 	if err != nil {
 		return ""
 	}
-	return buf.String()
+	return b.String()
 }
 
 func StringToInt(s string) int {
@@ -254,7 +254,7 @@ func StringReplaceMulti(str string, fromTo ...string) string {
 }
 
 func StringToUpperCamelCase(str string) string {
-	var buf bytes.Buffer
+	var b strings.Builder
 	var last byte = '_'
 	for _, c := range []byte(str) {
 		if c != '_' {
@@ -263,15 +263,15 @@ func StringToUpperCamelCase(str string) string {
 			} else {
 				c = byte(unicode.ToLower(rune(c)))
 			}
-			buf.WriteByte(c)
+			b.WriteByte(c)
 		}
 		last = c
 	}
-	return buf.String()
+	return b.String()
 }
 
 func StringToLowerCamelCase(str string) string {
-	var buf bytes.Buffer
+	var b strings.Builder
 	var last byte
 	for _, c := range []byte(str) {
 		if c != '_' {
@@ -280,11 +280,11 @@ func StringToLowerCamelCase(str string) string {
 			} else {
 				c = byte(unicode.ToLower(rune(c)))
 			}
-			buf.WriteByte(c)
+			b.WriteByte(c)
 		}
 		last = c
 	}
-	return buf.String()
+	return b.String()
 }
 
 func StringMapSortedKeys(m map[string]string) []string {
