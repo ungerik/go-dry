@@ -213,10 +213,10 @@ func HTTPRespondText(response string, responseWriter http.ResponseWriter, reques
 
 // HTTPUnmarshalRequestBodyJSON reads a http.Request body and unmarshals it as JSON to result.
 func HTTPUnmarshalRequestBodyJSON(request *http.Request, result interface{}) error {
+	defer request.Body.Close()
 	body, err := ioutil.ReadAll(request.Body)
 	if err != nil {
 		return err
 	}
-	defer request.Body.Close()
 	return json.Unmarshal(body, result)
 }
