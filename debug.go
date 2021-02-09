@@ -16,8 +16,7 @@ import (
 // a string and used as JSON line indent.
 // If no indet argument is given, two spaces will be used
 // to indent JSON lines.
-// A byte slice as input will be interpreted as JSON
-// and marshalled with indent the same way a json.Raw input would be.
+// A byte slice as input will be marshalled as json.RawMessage.
 func PrettyPrintAsJSON(input interface{}, indent ...string) error {
 	var indentStr string
 	if len(indent) == 0 {
@@ -25,8 +24,8 @@ func PrettyPrintAsJSON(input interface{}, indent ...string) error {
 	} else {
 		indentStr = strings.Join(indent, "")
 	}
-	if _, isBytes := input.([]byte); isBytes {
-		input = json.Raw(input)
+	if b, ok := input.([]byte); ok {
+		input = json.RawMessage(b)
 	}
 	data, err := json.MarshalIndent(input, "", indentStr)
 	if err != nil {
