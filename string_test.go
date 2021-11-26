@@ -1,6 +1,7 @@
 package dry
 
 import (
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -87,5 +88,15 @@ func Test_StringReplaceHTMLTags(t *testing.T) {
 
 	if StringReplaceHTMLTags(withHTML, "xx") != replacedHTML {
 		t.Fail()
+	}
+}
+
+func Test_TwoSlicesSubtraction(t *testing.T) {
+	A := []string{"apple", "orange", "banana", "peach", "plum"}
+	B := []string{"melon", "banana", "guava", "plum"}
+	wanted := []string{"apple", "orange", "peach"}
+	result := TwoSlicesSubtraction(A, B)
+	if !reflect.DeepEqual(wanted, result) {
+		t.Errorf("wanted: %v, but got: %v", wanted, result)
 	}
 }
