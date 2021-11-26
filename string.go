@@ -511,3 +511,18 @@ func (set StringSet) ReverseSorted() []string {
 	sort.Sort(sort.Reverse(sort.StringSlice(list)))
 	return list
 }
+
+// TwoSlicesSubtraction remove any string that A,B both contain from A and returns the remainder of A
+func TwoSlicesSubtraction(A, B []string) []string {
+	remainder := make([]string, 0, len(A))
+Range:
+	for _, sA := range A {
+		for _, sB := range B {
+			if sA == sB {
+				continue Range
+			}
+		}
+		remainder = append(remainder, sA)
+	}
+	return remainder
+}
