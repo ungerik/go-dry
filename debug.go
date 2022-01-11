@@ -76,7 +76,7 @@ func fprintStackTraceLine(i int, lastFile *string, b *strings.Builder) bool {
 	// Print this much at least.  If we can't find the source, it won't show.
 	fmt.Fprintf(b, "%s:%d (0x%x)\n", file, line, pc)
 	if file != *lastFile {
-		data, err := ioutil.ReadFile(file)
+		data, err := ioutil.ReadFile(file) //#nosec G304
 		if err != nil {
 			return true
 		}

@@ -102,7 +102,7 @@ func WaitForStdin(println ...interface{}) byte {
 		fmt.Println(println...)
 	}
 	buffer := make([]byte, 1)
-	os.Stdin.Read(buffer)
+	os.Stdin.Read(buffer) //#nosec G104
 	return buffer[0]
 }
 

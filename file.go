@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"compress/flate"
 	"compress/zlib"
-	"crypto/md5"
+	"crypto/md5" //#nosec
 	"encoding/csv"
 	"encoding/json"
 	"encoding/xml"
@@ -16,6 +16,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+
 	// "strconv"
 	"strings"
 	"time"
@@ -49,19 +50,19 @@ func FileGetBytes(filenameOrURL string, timeout ...time.Duration) ([]byte, error
 			return ioutil.ReadAll(r.Body)
 		}
 	}
-	return ioutil.ReadFile(filenameOrURL)
+	return ioutil.ReadFile(filenameOrURL) //#nosec G304
 }
 
 func FileSetBytes(filename string, data []byte) error {
-	return ioutil.WriteFile(filename, data, 0660)
+	return ioutil.WriteFile(filename, data, 0600)
 }
 
 func FileAppendBytes(filename string, data []byte) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0660)
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0600) //#nosec G304
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer file.Close() //#nosec G307
 	_, err = file.Write(data)
 	return err
 }
@@ -146,7 +147,7 @@ func FileSetCSV(filename string, records [][]string) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer file.Close() //#nosec G307
 	writer := csv.NewWriter(file)
 	return writer.WriteAll(records)
 }
@@ -279,17 +280,20 @@ func FileGetLastLine(filenameOrURL string, timeout ...time.Duration) (line strin
 			return "", err
 		}
 	} else {
-		file, err := os.Open(filenameOrURL)
+		file, err := os.Open(filenameOrURL) //#nosec G304
 		if err != nil {
 			return "", err
 		}
-		defer file.Close()
+		defer file.Close() //#nosec G307
 		info, err := file.Stat()
 		if err != nil {
 			return "", err
 		}
 		if start := info.Size() - 64*1024; start > 0 {
-			file.Seek(start, os.SEEK_SET)
+			_, err = file.Seek(start, os.SEEK_SET)
+			if err != nil {
+				return "", err
+			}
 		}
 		data, err = ioutil.ReadAll(file)
 		if err != nil {
@@ -405,7 +409,7 @@ func FileMD5Bytes(filenameOrURL string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	hash := md5.New()
+	hash := md5.New() //#nosec
 	_, err = io.Copy(hash, bytes.NewBuffer(data))
 	if err != nil {
 		return nil, err
@@ -432,7 +436,7 @@ func FileGetInflate(filenameOrURL string) ([]byte, error) {
 		return nil, err
 	}
 	reader := flate.NewReader(bytes.NewBuffer(data))
-	defer reader.Close()
+	defer reader.Close() //#nosec G307
 	return ioutil.ReadAll(reader)
 }
 
@@ -441,7 +445,7 @@ func FileSetDeflate(filename string, data []byte) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer file.Close() //#nosec G307
 	fileBuf := bufio.NewWriter(file)
 	defer fileBuf.Flush()
 	writer, err := flate.NewWriter(fileBuf, flate.BestCompression)
@@ -464,7 +468,7 @@ func FileGetGz(filenameOrURL string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer reader.Close()
+	defer reader.Close() //#nosec G307
 	return ioutil.ReadAll(reader)
 }
 
@@ -473,7 +477,7 @@ func FileSetGz(filename string, data []byte) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer file.Close() //#nosec G307
 	fileBuf := bufio.NewWriter(file)
 	defer fileBuf.Flush()
 	writer, err := zlib.NewWriterLevel(fileBuf, zlib.BestCompression)
@@ -497,47 +501,50 @@ func FileSize(filename string) int64 {
 }
 
 func FilePrintf(filename, format string, args ...interface{}) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY, 0660)
-	if err == nil {
-		_, err = fmt.Fprintf(file, format, args...)
-		file.Close()
+	file, err := os.OpenFile(filename, os.O_WRONLY, 0600) //#nosec G304
+	if err != nil {
+		return err
 	}
+	defer file.Close() //#nosec G307
+	_, err = fmt.Fprintf(file, format, args...)
 	return err
 }
 
 func FileAppendPrintf(filename, format string, args ...interface{}) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0660)
-	if err == nil {
-		_, err = fmt.Fprintf(file, format, args...)
-		file.Close()
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0600) //#nosec G304
+	if err != nil {
+		return err
 	}
+	defer file.Close() //#nosec G307
+	_, err = fmt.Fprintf(file, format, args...)
 	return err
 }
 
 func FileScanf(filename, format string, args ...interface{}) error {
-	file, err := os.OpenFile(filename, os.O_RDONLY, 0660)
-	if err == nil {
-		_, err = fmt.Fscanf(file, format, args...)
-		file.Close()
+	file, err := os.OpenFile(filename, os.O_RDONLY, 0600) //#nosec G304
+	if err != nil {
+		return err
 	}
+	defer file.Close() //#nosec G307
+	_, err = fmt.Fscanf(file, format, args...)
 	return err
 }
 
 func ListDir(dir string) ([]string, error) {
-	f, err := os.Open(dir)
+	f, err := os.Open(dir) //#nosec G304
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer f.Close() //#nosec G307
 	return f.Readdirnames(-1)
 }
 
 func ListDirFiles(dir string) ([]string, error) {
-	f, err := os.Open(dir)
+	f, err := os.Open(dir) //#nosec G304
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer f.Close() //#nosec G307
 	fileInfos, err := f.Readdir(-1)
 	if err != nil {
 		return nil, err
@@ -552,11 +559,11 @@ func ListDirFiles(dir string) ([]string, error) {
 }
 
 func ListDirDirectories(dir string) ([]string, error) {
-	f, err := os.Open(dir)
+	f, err := os.Open(dir) //#nosec G304
 	if err != nil {
 		return nil, err
 	}
-	defer f.Close()
+	defer f.Close() //#nosec G307
 	fileInfos, err := f.Readdir(-1)
 	if err != nil {
 		return nil, err
@@ -573,16 +580,16 @@ func ListDirDirectories(dir string) ([]string, error) {
 // FileCopy copies file source to destination dest.
 // Based on Jaybill McCarthy's code which can be found at http://jayblog.jaybill.com/post/id/26
 func FileCopy(source string, dest string) (err error) {
-	sourceFile, err := os.Open(source)
+	sourceFile, err := os.Open(source) //#nosec G304
 	if err != nil {
 		return err
 	}
-	defer sourceFile.Close()
+	defer sourceFile.Close() //#nosec G307
 	destFile, err := os.Create(dest)
 	if err != nil {
 		return err
 	}
-	defer destFile.Close()
+	defer destFile.Close() //#nosec G307
 	_, err = io.Copy(destFile, sourceFile)
 	if err == nil {
 		si, err := os.Stat(source)
@@ -606,7 +613,7 @@ func FileCopyDir(source string, dest string) (err error) {
 		return &FileCopyError{"Source is not a directory"}
 	}
 	// ensure dest dir does not already exist
-	_, err = os.Open(dest)
+	_, err = os.Open(dest) //#nosec G304
 	if !os.IsNotExist(err) {
 		return &FileCopyError{"Destination already exists"}
 	}

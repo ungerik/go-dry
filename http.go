@@ -69,7 +69,7 @@ func HTTPPostJSON(url string, data interface{}) error {
 	if err != nil {
 		return err
 	}
-	response, err := http.Post(url, "application/json", bytes.NewBuffer(b))
+	response, err := http.Post(url, "application/json", bytes.NewBuffer(b)) //#nosec G107
 	if err == nil && (response.StatusCode < 200 || response.StatusCode > 299) {
 		err = errors.New(response.Status)
 	}
@@ -85,7 +85,7 @@ func HTTPPostXML(url string, data interface{}) error {
 	if err != nil {
 		return err
 	}
-	response, err := http.Post(url, "application/xml", bytes.NewBuffer(b))
+	response, err := http.Post(url, "application/xml", bytes.NewBuffer(b)) //#nosec G107
 	if err == nil && (response.StatusCode < 200 || response.StatusCode > 299) {
 		err = errors.New(response.Status)
 	}

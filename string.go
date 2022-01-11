@@ -2,8 +2,8 @@ package dry
 
 import (
 	"bytes"
-	"crypto/md5"
-	"crypto/sha1"
+	"crypto/md5"  //#nosec
+	"crypto/sha1" //#nosec
 	"encoding/base64"
 	"encoding/csv"
 	"encoding/json"
@@ -112,14 +112,14 @@ func StringReplaceHTMLTags(text, replacement string) (plainText string) {
 
 // StringMD5Hex returns the hex encoded MD5 hash of data
 func StringMD5Hex(data string) string {
-	hash := md5.New()
+	hash := md5.New() //#nosec
 	hash.Write([]byte(data))
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
 
 // StringSHA1Base64 returns the base64 encoded SHA1 hash of data
 func StringSHA1Base64(data string) string {
-	hash := sha1.Sum([]byte(data))
+	hash := sha1.Sum([]byte(data)) //#nosec
 	return base64.StdEncoding.EncodeToString(hash[:])
 }
 

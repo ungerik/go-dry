@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"compress/flate"
 	"compress/gzip"
-	"crypto/md5"
+	"crypto/md5" //#nosec
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
@@ -30,7 +30,7 @@ func BytesReader(data interface{}) io.Reader {
 }
 
 func BytesMD5(data string) string {
-	hash := md5.New()
+	hash := md5.New() //#nosec
 	hash.Write([]byte(data))
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
@@ -56,7 +56,10 @@ func BytesDecodeHex(hexStr string) string {
 func BytesDeflate(uncompressed []byte) (compressed []byte) {
 	var buf bytes.Buffer
 	writer := Deflate.GetWriter(&buf)
-	writer.Write(uncompressed)
+	_, err := writer.Write(uncompressed)
+	if err != nil {
+		panic(err)
+	}
 	Deflate.ReturnWriter(writer)
 	return buf.Bytes()
 }
@@ -70,7 +73,10 @@ func BytesInflate(compressed []byte) (uncompressed []byte) {
 func BytesGzip(uncompressed []byte) (compressed []byte) {
 	var buf bytes.Buffer
 	writer := Gzip.GetWriter(&buf)
-	writer.Write(uncompressed)
+	_, err := writer.Write(uncompressed)
+	if err != nil {
+		panic(err)
+	}
 	Gzip.ReturnWriter(writer)
 	return buf.Bytes()
 }
