@@ -622,7 +622,7 @@ func FileCopyDir(source string, dest string) (err error) {
 	if err != nil {
 		return err
 	}
-	entries, err := ioutil.ReadDir(source)
+	entries, err := os.ReadDir(source)
 	for _, entry := range entries {
 		sourcePath := filepath.Join(source, entry.Name())
 		destinationPath := filepath.Join(dest, entry.Name())
