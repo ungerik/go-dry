@@ -1,6 +1,9 @@
 package dry
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func Test_FileGetString(t *testing.T) {
 	_, err := FileGetString("invalid_file")
@@ -8,19 +11,19 @@ func Test_FileGetString(t *testing.T) {
 		t.Fail()
 	}
 
-	str, err := FileGetString("testfile.txt")
+	str, err := FileGetString("LICENSE")
 	if err != nil {
 		t.Error(err)
 	}
-	if str != "Hello World!" {
+	if !strings.HasPrefix(str, "The MIT License (MIT)") {
 		t.Fail()
 	}
 
-	str, err = FileGetString("https://raw.github.com/ungerik/go-dry/master/testfile.txt")
+	str, err = FileGetString("https://raw.githubusercontent.com/ungerik/go-dry/master/LICENSE")
 	if err != nil {
 		t.Error(err)
 	}
-	if str != "Hello World!" {
+	if !strings.HasPrefix(str, "The MIT License (MIT)") {
 		t.Fail()
 	}
 }
