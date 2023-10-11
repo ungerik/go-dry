@@ -9,7 +9,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"strings"
 )
 
@@ -66,7 +65,7 @@ func BytesDeflate(uncompressed []byte) (compressed []byte) {
 
 func BytesInflate(compressed []byte) (uncompressed []byte) {
 	reader := flate.NewReader(bytes.NewBuffer(compressed))
-	result, _ := ioutil.ReadAll(reader)
+	result, _ := io.ReadAll(reader)
 	return result
 }
 
@@ -86,7 +85,7 @@ func BytesUnGzip(compressed []byte) (uncompressed []byte) {
 	if err != nil {
 		return nil
 	}
-	result, _ := ioutil.ReadAll(reader)
+	result, _ := io.ReadAll(reader)
 	return result
 }
 

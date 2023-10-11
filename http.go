@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -214,7 +213,7 @@ func HTTPRespondText(response string, responseWriter http.ResponseWriter, reques
 // HTTPUnmarshalRequestBodyJSON reads a http.Request body and unmarshals it as JSON to result.
 func HTTPUnmarshalRequestBodyJSON(request *http.Request, result interface{}) error {
 	defer request.Body.Close()
-	body, err := ioutil.ReadAll(request.Body)
+	body, err := io.ReadAll(request.Body)
 	if err != nil {
 		return err
 	}

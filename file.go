@@ -12,7 +12,6 @@ import (
 	"fmt"
 	"hash/crc64"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -47,14 +46,14 @@ func FileGetBytes(filenameOrURL string, timeout ...time.Duration) ([]byte, error
 			if r.StatusCode < 200 || r.StatusCode > 299 {
 				return nil, fmt.Errorf("%d: %s", r.StatusCode, http.StatusText(r.StatusCode))
 			}
-			return ioutil.ReadAll(r.Body)
+			return io.ReadAll(r.Body)
 		}
 	}
-	return ioutil.ReadFile(filenameOrURL) //#nosec G304
+	return os.ReadFile(filenameOrURL) //#nosec G304
 }
 
 func FileSetBytes(filename string, data []byte) error {
-	return ioutil.WriteFile(filename, data, 0600)
+	return os.WriteFile(filename, data, 0600)
 }
 
 func FileAppendBytes(filename string, data []byte) error {
@@ -295,7 +294,7 @@ func FileGetLastLine(filenameOrURL string, timeout ...time.Duration) (line strin
 				return "", err
 			}
 		}
-		data, err = ioutil.ReadAll(file)
+		data, err = io.ReadAll(file)
 		if err != nil {
 			return "", err
 		}
@@ -331,7 +330,7 @@ func FileGetLastLine(filenameOrURL string, timeout ...time.Duration) (line strin
 // 	// if start := info.Size() - 64*1024; start > 0 {
 // 	// 	file.Seek(start, os.SEEK_SET)
 // 	// }
-// 	// data, err = ioutil.ReadAll(file)
+// 	// data, err = io.ReadAll(file)
 // 	// if err != nil {
 // 	// 	return nil, err
 // 	// }
@@ -437,7 +436,7 @@ func FileGetInflate(filenameOrURL string) ([]byte, error) {
 	}
 	reader := flate.NewReader(bytes.NewBuffer(data))
 	defer reader.Close() //#nosec G307
-	return ioutil.ReadAll(reader)
+	return io.ReadAll(reader)
 }
 
 func FileSetDeflate(filename string, data []byte) error {
@@ -469,7 +468,7 @@ func FileGetGz(filenameOrURL string) ([]byte, error) {
 		return nil, err
 	}
 	defer reader.Close() //#nosec G307
-	return ioutil.ReadAll(reader)
+	return io.ReadAll(reader)
 }
 
 func FileSetGz(filename string, data []byte) error {

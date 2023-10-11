@@ -3,7 +3,7 @@ package dry
 import (
 	"compress/gzip"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -31,7 +31,7 @@ func TestHTTPCompressHandlerFunc(t *testing.T) {
 			t.Fatalf("gzip.NewReader failed: %v", err)
 		}
 
-		readData, err := ioutil.ReadAll(reader)
+		readData, err := io.ReadAll(reader)
 		if err != nil {
 			t.Fatalf("Reading from body failed: %v", err)
 		}
@@ -62,7 +62,7 @@ func TestHTTPCompressHandler(t *testing.T) {
 			t.Fatalf("gzip.NewReader failed: %v", err)
 		}
 
-		readData, err := ioutil.ReadAll(reader)
+		readData, err := io.ReadAll(reader)
 		if err != nil {
 			t.Fatalf("Reading from body failed: %v", err)
 		}
