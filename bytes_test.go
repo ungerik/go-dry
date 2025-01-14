@@ -97,7 +97,7 @@ func Test_BytesDecodeHex(t *testing.T) {
 func testCompressDecompress(t *testing.T,
 	compressFunc func([]byte) []byte,
 	decompressFunc func([]byte) []byte) {
-	testFn := func(testData []byte) {
+	testFn := func(t *testing.T, testData []byte) {
 		compressedData := compressFunc(testData)
 		uncompressedData := decompressFunc(compressedData)
 		if !bytes.Equal(testData, uncompressedData) {
@@ -105,9 +105,9 @@ func testCompressDecompress(t *testing.T,
 		}
 	}
 
-	go testFn([]byte("hello123"))
-	go testFn([]byte("gopher456"))
-	go testFn([]byte("dry789"))
+	testFn(t, []byte("hello123"))
+	testFn(t, []byte("gopher456"))
+	testFn(t, []byte("dry789"))
 }
 
 func Test_BytesDeflateInflate(t *testing.T) {
