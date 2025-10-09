@@ -125,7 +125,7 @@ func StringSHA1Base64(data string) string {
 
 func StringAddURLParam(url, name, value string) string {
 	var separator string
-	if strings.IndexRune(url, '?') == -1 {
+	if strings.ContainsRune(url, '?') {
 		separator = "?"
 	} else {
 		separator = "&"
@@ -408,8 +408,8 @@ func (s StringGroupedNumberPostfixSorter) Swap(i, j int) {
 // Map a function on each element of a slice of strings.
 func StringMap(f func(string) string, data []string) []string {
 	size := len(data)
-	result := make([]string, size, size)
-	for i := 0; i < size; i++ {
+	result := make([]string, size)
+	for i := range size {
 		result[i] = f(data[i])
 	}
 	return result
@@ -417,7 +417,7 @@ func StringMap(f func(string) string, data []string) []string {
 
 // Filter out all strings where the function does not return true.
 func StringFilter(f func(string) bool, data []string) []string {
-	result := make([]string, 0, 0)
+	var result []string
 	for _, element := range data {
 		if f(element) {
 			result = append(result, element)

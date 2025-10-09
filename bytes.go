@@ -10,9 +10,10 @@ import (
 	"fmt"
 	"io"
 	"strings"
+
 )
 
-func BytesReader(data interface{}) io.Reader {
+func BytesReader(data any) io.Reader {
 	switch s := data.(type) {
 	case io.Reader:
 		return s
@@ -152,8 +153,8 @@ func BytesTail(data []byte, numLines int) (lines []string, rest []byte) {
 // BytesMap maps a function on each element of a slice of bytes.
 func BytesMap(f func(byte) byte, data []byte) []byte {
 	size := len(data)
-	result := make([]byte, size, size)
-	for i := 0; i < size; i++ {
+	result := make([]byte, size)
+	for i := range size {
 		result[i] = f(data[i])
 	}
 	return result
@@ -161,7 +162,7 @@ func BytesMap(f func(byte) byte, data []byte) []byte {
 
 // BytesFilter filters out all bytes where the function does not return true.
 func BytesFilter(f func(byte) bool, data []byte) []byte {
-	result := make([]byte, 0, 0)
+	var result []byte
 	for _, element := range data {
 		if f(element) {
 			result = append(result, element)
