@@ -17,7 +17,7 @@ import (
 )
 
 // StringMarshalJSON marshals data to an indented string.
-func StringMarshalJSON(data interface{}, indent string) string {
+func StringMarshalJSON(data any, indent string) string {
 	buffer, err := json.MarshalIndent(data, "", indent)
 	if err != nil {
 		return ""
@@ -194,7 +194,7 @@ func StringInSlice(s string, slice []string) bool {
 // StringJoinFormat formats every value in values with format
 // and joins the result with sep as separator.
 // values must be a slice of a formatable type
-func StringJoinFormat(format string, values interface{}, sep string) string {
+func StringJoinFormat(format string, values any, sep string) string {
 	v := reflect.ValueOf(values)
 	if v.Kind() != reflect.Slice {
 		panic("values is not a slice")
@@ -212,7 +212,7 @@ func StringJoinFormat(format string, values interface{}, sep string) string {
 // StringJoin formats every value in values according to its default formatting
 // and joins the result with sep as separator.
 // values must be a slice of a formatable type
-func StringJoin(values interface{}, sep string) string {
+func StringJoin(values any, sep string) string {
 	v := reflect.ValueOf(values)
 	if v.Kind() != reflect.Slice {
 		panic("values is not a slice")

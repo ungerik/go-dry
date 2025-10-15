@@ -18,7 +18,7 @@ func (s *StringBuilder) Write(strings ...string) *StringBuilder {
 	return s
 }
 
-func (s *StringBuilder) Printf(format string, args ...interface{}) *StringBuilder {
+func (s *StringBuilder) Printf(format string, args ...any) *StringBuilder {
 	fmt.Fprintf(&s.buffer, format, args...)
 	return s
 }

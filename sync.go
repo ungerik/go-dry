@@ -2,6 +2,7 @@ package dry
 
 import (
 	"sync"
+
 )
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -179,11 +180,11 @@ func (s *SyncFloat) Swap(value float64) float64 {
 
 type SyncMap struct {
 	mutex sync.RWMutex
-	m     map[string]interface{}
+	m     map[string]any
 }
 
 func NewSyncMap() *SyncMap {
-	return &SyncMap{m: make(map[string]interface{})}
+	return &SyncMap{m: make(map[string]any)}
 }
 
 func (s *SyncMap) Has(key string) bool {
@@ -193,13 +194,13 @@ func (s *SyncMap) Has(key string) bool {
 	return ok
 }
 
-func (s *SyncMap) Get(key string) interface{} {
+func (s *SyncMap) Get(key string) any {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 	return s.m[key]
 }
 
-func (s *SyncMap) Add(key string, value interface{}) {
+func (s *SyncMap) Add(key string, value any) {
 	s.mutex.Lock()
 	s.m[key] = value
 	s.mutex.Unlock()
@@ -311,7 +312,7 @@ func (s *SyncPoolMap) Add(key string, value *sync.Pool) {
 	s.mutex.Unlock()
 }
 
-func (s *SyncPoolMap) GetOrAddNew(key string, newFunc func() interface{}) *sync.Pool {
+func (s *SyncPoolMap) GetOrAddNew(key string, newFunc func() any) *sync.Pool {
 	s.mutex.Lock()
 	pool := s.m[key]
 	if pool == nil {

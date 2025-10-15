@@ -26,7 +26,7 @@ func (t MyError) Error() string {
 
 func Test_BytesReader(t *testing.T) {
 	expected := []byte("hello")
-	testBytesReaderFn := func(input interface{}) {
+	testBytesReaderFn := func(input any) {
 		result := make([]byte, 5)
 		returnedIoReader := BytesReader(input)
 		n, _ := returnedIoReader.Read(result)

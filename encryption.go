@@ -18,7 +18,7 @@ type aesCipherPool struct {
 }
 
 func (pool *aesCipherPool) forKey(key []byte) *sync.Pool {
-	return pool.poolMap.GetOrAddNew(string(key), func() interface{} {
+	return pool.poolMap.GetOrAddNew(string(key), func() any {
 		block, err := aes.NewCipher(key)
 		if err != nil {
 			panic(err)

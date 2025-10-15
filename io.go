@@ -50,7 +50,7 @@ func (rw *CountingReadWriter) Write(p []byte) (n int, err error) {
 
 // ReadBinary wraps binary.Read with a CountingReader and returns
 // the actual bytes read by it.
-func ReadBinary(r io.Reader, order binary.ByteOrder, data interface{}) (n int, err error) {
+func ReadBinary(r io.Reader, order binary.ByteOrder, data any) (n int, err error) {
 	countingReader := CountingReader{Reader: r}
 	err = binary.Read(&countingReader, order, data)
 	return countingReader.BytesRead, err
@@ -97,7 +97,7 @@ func ReadLine(reader io.Reader) (line string, err error) {
 // The first byte from os.Stdin is returned as result.
 // If there are println arguments, then fmt.Println will be
 // called with those before reading from os.Stdin.
-func WaitForStdin(println ...interface{}) byte {
+func WaitForStdin(println ...any) byte {
 	if len(println) > 0 {
 		fmt.Println(println...)
 	}

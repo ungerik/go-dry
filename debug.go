@@ -17,7 +17,7 @@ import (
 // If no indent argument is given, two spaces will be used
 // to indent JSON lines.
 // A byte slice as input will be marshalled as json.RawMessage.
-func PrettyPrintAsJSON(input interface{}, indent ...string) error {
+func PrettyPrintAsJSON(input any, indent ...string) error {
 	var indentStr string
 	if len(indent) == 0 {
 		indentStr = "  "
@@ -42,7 +42,7 @@ func PrettyPrintAsJSON(input interface{}, indent ...string) error {
 // Arbitrary objects can be passed as arguments to avoid "declared and not used"
 // error messages when commenting code out and in.
 // The result is a nil interface{} dummy value.
-func Nop(dummiesIn ...interface{}) (dummyOut interface{}) {
+func Nop(dummiesIn ...any) (dummyOut any) {
 	return nil
 }
 
