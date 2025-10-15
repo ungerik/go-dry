@@ -10,11 +10,11 @@ import (
 	"sync"
 )
 
-// PrettyPrintAsJSON marshalles input as indented JSON
-// and calles fmt.Println with the result.
+// PrettyPrintAsJSON marshals input as indented JSON
+// and calls fmt.Println with the result.
 // If indent arguments are given, they are joined into
 // a string and used as JSON line indent.
-// If no indet argument is given, two spaces will be used
+// If no indent argument is given, two spaces will be used
 // to indent JSON lines.
 // A byte slice as input will be marshalled as json.RawMessage.
 func PrettyPrintAsJSON(input interface{}, indent ...string) error {

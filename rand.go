@@ -3,13 +3,15 @@ package dry
 import (
 	cryptorand "crypto/rand"
 	"fmt"
-	mathrand "math/rand"
-	"time"
 )
 
-// RandSeedWithTime calls rand.Seed() with the current time.
+// RandSeedWithTime is deprecated since Go 1.20.
+// The math/rand package now automatically seeds itself.
+// This function is kept for backward compatibility but does nothing.
+//
+// Deprecated: No longer needed. Go 1.20+ automatically seeds math/rand.
 func RandSeedWithTime() {
-	mathrand.Seed(time.Now().UTC().UnixNano())
+	// No-op: Go 1.20+ automatically seeds math/rand
 }
 
 func getRandomHexString(length int, formatStr string) string {

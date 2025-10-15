@@ -21,12 +21,15 @@ func NetIP() string {
 	return ""
 }
 
-// RealNetIP returns the real local IP of the system or an empty string.
+// RealNetIP returns the real local IPv4 address of the system or an empty string.
+// It returns the first non-loopback IPv4 address found.
+// If an error occurs while getting network interfaces, the error is printed to stderr
+// and an empty string is returned.
 func RealNetIP() string {
 	addrs, err := net.InterfaceAddrs()
 
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintln(os.Stderr, err)
 		return ""
 	}
 

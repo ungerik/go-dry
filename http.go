@@ -69,10 +69,14 @@ func HTTPPostJSON(url string, data interface{}) error {
 		return err
 	}
 	response, err := http.Post(url, "application/json", bytes.NewBuffer(b)) //#nosec G107
-	if err == nil && (response.StatusCode < 200 || response.StatusCode > 299) {
-		err = errors.New(response.Status)
+	if err != nil {
+		return err
 	}
-	return err
+	defer response.Body.Close()
+	if response.StatusCode < 200 || response.StatusCode > 299 {
+		return errors.New(response.Status)
+	}
+	return nil
 }
 
 // HTTPPostXML marshalles data as XML
@@ -85,10 +89,14 @@ func HTTPPostXML(url string, data interface{}) error {
 		return err
 	}
 	response, err := http.Post(url, "application/xml", bytes.NewBuffer(b)) //#nosec G107
-	if err == nil && (response.StatusCode < 200 || response.StatusCode > 299) {
-		err = errors.New(response.Status)
+	if err != nil {
+		return err
 	}
-	return err
+	defer response.Body.Close()
+	if response.StatusCode < 200 || response.StatusCode > 299 {
+		return errors.New(response.Status)
+	}
+	return nil
 }
 
 // HTTPDelete performs a HTTP DELETE request

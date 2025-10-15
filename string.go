@@ -110,25 +110,31 @@ func StringReplaceHTMLTags(text, replacement string) (plainText string) {
 	return buf.String()
 }
 
-// StringMD5Hex returns the hex encoded MD5 hash of data
+// StringMD5Hex returns the hex encoded MD5 hash of data.
+// WARNING: MD5 is cryptographically broken and should NOT be used for security purposes.
+// This function is suitable for checksums, cache keys, and other non-security applications only.
 func StringMD5Hex(data string) string {
 	hash := md5.New() //#nosec
 	hash.Write([]byte(data))
 	return fmt.Sprintf("%x", hash.Sum(nil))
 }
 
-// StringSHA1Base64 returns the base64 encoded SHA1 hash of data
+// StringSHA1Base64 returns the base64 encoded SHA1 hash of data.
+// WARNING: SHA1 is cryptographically broken and should NOT be used for security purposes.
+// This function is suitable for checksums, cache keys, and other non-security applications only.
 func StringSHA1Base64(data string) string {
 	hash := sha1.Sum([]byte(data)) //#nosec
 	return base64.StdEncoding.EncodeToString(hash[:])
 }
 
+// StringAddURLParam adds a URL parameter to url.
+// It automatically adds '?' if no parameters exist yet, or '&' if parameters already exist.
 func StringAddURLParam(url, name, value string) string {
 	var separator string
 	if strings.ContainsRune(url, '?') {
-		separator = "?"
-	} else {
 		separator = "&"
+	} else {
+		separator = "?"
 	}
 	return url + separator + name + "=" + value
 }
@@ -154,16 +160,23 @@ func StringCSV(records [][]string) string {
 	return b.String()
 }
 
+// StringToInt parses s as a base-10 integer and returns the result.
+// Returns 0 if s cannot be parsed. Use strconv.ParseInt for error handling.
 func StringToInt(s string) int {
 	i, _ := strconv.ParseInt(s, 10, 64)
 	return int(i)
 }
 
+// StringToFloat parses s as a float64 and returns the result.
+// Returns 0.0 if s cannot be parsed. Use strconv.ParseFloat for error handling.
 func StringToFloat(s string) float64 {
 	f, _ := strconv.ParseFloat(s, 64)
 	return f
 }
 
+// StringToBool parses s as a boolean and returns the result.
+// Returns false if s cannot be parsed. Use strconv.ParseBool for error handling.
+// Accepts: 1, t, T, TRUE, true, True, 0, f, F, FALSE, false, False
 func StringToBool(s string) bool {
 	b, _ := strconv.ParseBool(s)
 	return b
@@ -338,13 +351,14 @@ func StringSplitNumberPostfix(s string) (base, number string) {
 	return "", s
 }
 
+// StringSplitOnce splits s at the first occurrence of sep.
+// Returns the part before and after sep. If sep is not found, returns s and empty string.
 func StringSplitOnce(s, sep string) (pre, post string) {
-	parts := strings.SplitN(s, sep, 1)
+	parts := strings.SplitN(s, sep, 2)
 	if len(parts) == 2 {
 		return parts[0], parts[1]
-	} else {
-		return parts[0], ""
 	}
+	return parts[0], ""
 }
 
 func StringSplitOnceChar(s string, sep byte) (pre, post string) {

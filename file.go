@@ -289,7 +289,7 @@ func FileGetLastLine(filenameOrURL string, timeout ...time.Duration) (line strin
 			return "", err
 		}
 		if start := info.Size() - 64*1024; start > 0 {
-			_, err = file.Seek(start, os.SEEK_SET)
+			_, err = file.Seek(start, io.SeekStart)
 			if err != nil {
 				return "", err
 			}
@@ -395,6 +395,9 @@ func FileTouch(filename string) error {
 	return file.Close()
 }
 
+// FileMD5String returns the hex encoded MD5 hash of the file contents.
+// WARNING: MD5 is cryptographically broken and should NOT be used for security purposes.
+// This function is suitable for checksums, cache keys, and other non-security applications only.
 func FileMD5String(filenameOrURL string) (string, error) {
 	sum, err := FileMD5Bytes(filenameOrURL)
 	if err != nil {
@@ -403,6 +406,9 @@ func FileMD5String(filenameOrURL string) (string, error) {
 	return fmt.Sprintf("%x", sum), nil
 }
 
+// FileMD5Bytes returns the MD5 hash of the file contents.
+// WARNING: MD5 is cryptographically broken and should NOT be used for security purposes.
+// This function is suitable for checksums, cache keys, and other non-security applications only.
 func FileMD5Bytes(filenameOrURL string) ([]byte, error) {
 	data, err := FileGetBytes(filenameOrURL)
 	if err != nil {

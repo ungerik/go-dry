@@ -29,6 +29,9 @@ func BytesReader(data any) io.Reader {
 	return nil
 }
 
+// BytesMD5 returns the hex encoded MD5 hash of data.
+// WARNING: MD5 is cryptographically broken and should NOT be used for security purposes.
+// This function is suitable for checksums, cache keys, and other non-security applications only.
 func BytesMD5(data string) string {
 	hash := md5.New() //#nosec
 	hash.Write([]byte(data))
@@ -39,6 +42,8 @@ func BytesEncodeBase64(str string) string {
 	return base64.StdEncoding.EncodeToString([]byte(str))
 }
 
+// BytesDecodeBase64 decodes a base64 encoded string.
+// Returns an empty string if base64Str cannot be decoded.
 func BytesDecodeBase64(base64Str string) string {
 	result, _ := base64.StdEncoding.DecodeString(base64Str)
 	return string(result)
@@ -48,6 +53,8 @@ func BytesEncodeHex(str string) string {
 	return hex.EncodeToString([]byte(str))
 }
 
+// BytesDecodeHex decodes a hex encoded string.
+// Returns an empty string if hexStr cannot be decoded.
 func BytesDecodeHex(hexStr string) string {
 	result, _ := hex.DecodeString(hexStr)
 	return string(result)

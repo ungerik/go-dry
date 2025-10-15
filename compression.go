@@ -33,7 +33,7 @@ func (pool *DeflatePool) GetWriter(dst io.Writer) (writer *flate.Writer) {
 }
 
 // ReturnWriter returns a flate.Writer to the pool that can
-// late be reused via GetWriter.
+// later be reused via GetWriter.
 // Don't close the writer, Flush will be called before returning
 // it to the pool.
 func (pool *DeflatePool) ReturnWriter(writer *flate.Writer) {
@@ -60,7 +60,7 @@ func (pool *GzipPool) GetWriter(dst io.Writer) (writer *gzip.Writer) {
 }
 
 // ReturnWriter returns a gzip.Writer to the pool that can
-// late be reused via GetWriter.
+// later be reused via GetWriter.
 // Don't close the writer, Flush will be called before returning
 // it to the pool.
 func (pool *GzipPool) ReturnWriter(writer *gzip.Writer) {

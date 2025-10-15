@@ -49,7 +49,7 @@ func (rw *CountingReadWriter) Write(p []byte) (n int, err error) {
 }
 
 // ReadBinary wraps binary.Read with a CountingReader and returns
-// the acutal bytes read by it.
+// the actual bytes read by it.
 func ReadBinary(r io.Reader, order binary.ByteOrder, data interface{}) (n int, err error) {
 	countingReader := CountingReader{Reader: r}
 	err = binary.Read(&countingReader, order, data)

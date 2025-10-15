@@ -6,17 +6,26 @@ import (
 )
 
 // EnvironMap returns the current environment variables as a map.
+// Each environment variable is expected to be in "KEY=value" format.
+// Variables without an "=" separator are skipped.
 func EnvironMap() map[string]string {
 	return environToMap(os.Environ())
 }
 
+// environToMap converts environment variable strings to a map.
+// Each string is split at the first "=" into key and value.
+// Strings without "=" are skipped (returns found=false from strings.Cut).
+// For variables like "KEY=", the value will be an empty string.
+// For variables like "KEY=value1=value2", only splits at the first "=".
 func environToMap(environ []string) map[string]string {
 	ret := make(map[string]string)
 
 	for _, v := range environ {
-		parts := strings.SplitN(v, "=", 2)
-
-		ret[parts[0]] = parts[1]
+		key, value, found := strings.Cut(v, "=")
+		if !found {
+			continue
+		}
+		ret[key] = value
 	}
 
 	return ret
