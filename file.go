@@ -15,10 +15,8 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	// "strconv"
 	"strings"
 	"time"
-
 )
 
 func FileBufferedReader(filenameOrURL string) (io.Reader, error) {
@@ -53,11 +51,11 @@ func FileGetBytes(filenameOrURL string, timeout ...time.Duration) ([]byte, error
 }
 
 func FileSetBytes(filename string, data []byte) error {
-	return os.WriteFile(filename, data, 0600)
+	return os.WriteFile(filename, data, 0644)
 }
 
 func FileAppendBytes(filename string, data []byte) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0600) //#nosec G304
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644) //#nosec G304
 	if err != nil {
 		return err
 	}
@@ -506,7 +504,7 @@ func FileSize(filename string) int64 {
 }
 
 func FilePrintf(filename, format string, args ...any) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY, 0600) //#nosec G304
+	file, err := os.OpenFile(filename, os.O_WRONLY, 0644) //#nosec G304
 	if err != nil {
 		return err
 	}
@@ -516,7 +514,7 @@ func FilePrintf(filename, format string, args ...any) error {
 }
 
 func FileAppendPrintf(filename, format string, args ...any) error {
-	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0600) //#nosec G304
+	file, err := os.OpenFile(filename, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644) //#nosec G304
 	if err != nil {
 		return err
 	}
@@ -526,7 +524,7 @@ func FileAppendPrintf(filename, format string, args ...any) error {
 }
 
 func FileScanf(filename, format string, args ...any) error {
-	file, err := os.OpenFile(filename, os.O_RDONLY, 0600) //#nosec G304
+	file, err := os.OpenFile(filename, os.O_RDONLY, 0644) //#nosec G304
 	if err != nil {
 		return err
 	}
